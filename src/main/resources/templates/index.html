@@ -1,16 +1,286 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Vocabulary Typing Game</title>
+    <title>Typing Game</title>
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            overflow: hidden;
+            font-family: monospace;
+        }
+
+        #gameArea {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #gameOverMenu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .menu {
+            text-align: center;
+        }
+
+        .menu h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .menu button {
+            margin: 1rem;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: #333;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .menu button:hover {
+            background-color: #555;
+        }
+
+        #ship {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 30px;
+            background-color: white;
+            border-radius: 10px;
+        }
+
+        .meteor {
+            position: absolute;
+            font-size: 2rem;
+            color: cyan;
+        }
+
+        .bullet {
+            position: absolute;
+            width: 6px;
+            height: 20px;
+            background-color: red;
+        }
+
+        .wrong {
+            color: red;
+            font-weight: bold;
+        }
+
+        #lives {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 1.5rem;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-<h1>Vocabulary Typing Game</h1>
 
-<h2>今天的單字</h2>
-<p><strong th:text="${word}">apple</strong></p>
-<p>解釋：<span th:text="${definition}">蘋果</span></p>
+<div id="gameArea"></div>
+<div id="ship"></div>
+<div id="lives">❤️ x 10</div>
+<div id="gameOverMenu" style="display: none;">
+    <div class="menu">
+        <h1>💀 Game Over</h1>
+        <button onclick="restartGame()">🔁 重新開始</button>
+        <button onclick="goHome()">🏠 回到首頁</button>
+    </div>
+</div>
 
-<a href="/play">👉 開始遊戲</a>
+<script>
+    const gameArea = document.getElementById("gameArea");
+    const ship = document.getElementById("ship");
+    const livesDiv = document.getElementById("lives");
+
+    let activeMeteors = [];
+    let lockedTarget = null;
+    let isGameOver = false;
+    let nextSpawnTimeout = null;
+
+
+    function renderMeteorText(meteor) {
+        return [...meteor.remaining].map(ch => `<span>${ch}</span>`).join("");
+    }
+
+    function updateLives(lives) {
+        livesDiv.innerText = `❤️ x ${lives}`;
+    }
+
+    function shootBullet(targetMeteor) {
+        const bullet = document.createElement("div");
+        bullet.className = "bullet";
+
+        const shipBox = ship.getBoundingClientRect();
+        const meteorBox = targetMeteor.element.getBoundingClientRect();
+
+        const startX = shipBox.left + shipBox.width / 2;
+        const startY = shipBox.top;
+        const endX = meteorBox.left + meteorBox.width / 2;
+        const endY = meteorBox.top + 10;
+
+        bullet.style.left = `${startX}px`;
+        bullet.style.top = `${startY}px`;
+        bullet.style.transition = "top 0.5s linear, left 0.5s linear";
+        gameArea.appendChild(bullet);
+
+        setTimeout(() => {
+            bullet.style.left = `${endX}px`;
+            bullet.style.top = `${endY}px`;
+        }, 10);
+
+        setTimeout(() => bullet.remove(), 600);
+    }
+
+    document.addEventListener("keydown", (event) => {
+        const key = event.key.toLowerCase();
+
+        if (!lockedTarget) {
+            for (let meteor of activeMeteors) {
+                if (meteor.remaining.toLowerCase().startsWith(key)) {
+                    lockedTarget = meteor;
+                    break;
+                }
+            }
+        }
+
+        if (lockedTarget) {
+            const expected = lockedTarget.remaining.charAt(0).toLowerCase();
+            const spans = lockedTarget.element.querySelectorAll("span");
+            if (spans.length > 0) spans[0].classList.remove("wrong");
+
+            if (key === expected) {
+                shootBullet(lockedTarget);
+                lockedTarget.remaining = lockedTarget.remaining.substring(1);
+
+                if (lockedTarget.remaining.length > 0) {
+                    lockedTarget.element.innerHTML = renderMeteorText(lockedTarget);
+                } else {
+                    lockedTarget.element.innerText = lockedTarget.definition;
+                    lockedTarget.element.style.color = "yellow";
+                    lockedTarget = null;
+                }
+            } else {
+                if (spans.length > 0) spans[0].classList.add("wrong");
+            }
+        }
+    });
+
+    function renderMeteorTextFromString(str) {
+        return [...str].map(ch => `<span>${ch}</span>`).join("");
+    }
+
+    function showGameOverMenu() {
+        document.getElementById("gameOverMenu").style.display = "flex";
+        if (nextSpawnTimeout) {
+            clearTimeout(nextSpawnTimeout);
+            nextSpawnTimeout = null;
+        }
+    }
+
+    function restartGame() {
+        updateLives(10); // 預設 10 條命
+        if (nextSpawnTimeout) {
+            clearTimeout(nextSpawnTimeout);
+            nextSpawnTimeout = null;
+        }
+
+        fetch("/api/reset", { method: "POST" })
+            .then(() => {
+                // 清空現有隕石與遊戲狀態
+                activeMeteors.forEach(m => m.element.remove());
+                activeMeteors = [];
+                lockedTarget = null;
+                isGameOver = false;
+                document.getElementById("gameOverMenu").style.display = "none";
+                // 馬上重新取得新一顆隕石 + 更新生命
+                spawnMeteorFromAPI(); // 重新開始遊戲
+            });
+    }
+
+    function goHome() {
+        window.location.href = "/";
+    }
+
+    async function spawnMeteorFromAPI() {
+        const res = await fetch("/api/next-word");
+        const data = await res.json();
+
+        if (data.gameOver) {
+            showGameOverMenu();
+            return;
+        }
+
+        updateLives(data.lives);
+
+        const meteor = document.createElement("div");
+        meteor.className = "meteor";
+        meteor.innerHTML = renderMeteorTextFromString(data.word);
+        meteor.style.left = `${Math.random() * 80 + 10}%`;
+        meteor.style.top = "0px";
+        gameArea.appendChild(meteor);
+
+        const meteorObj = {
+            element: meteor,
+            remaining: data.word,
+            definition: data.definition,
+            y: 0
+        };
+
+        activeMeteors.push(meteorObj);
+
+        const fallInterval = setInterval(async () => {
+            meteorObj.y += 2;
+            meteor.style.top = `${meteorObj.y}px`;
+
+            if (meteorObj.y >= window.innerHeight - 50) {
+                clearInterval(fallInterval);
+
+                if (meteorObj.remaining.length > 0) {
+                    const lostRes = await fetch("/api/life/lost", { method: "POST" });
+                    const lostData = await lostRes.json();
+
+                    updateLives(lostData.lives);
+                    if (lostData.gameOver) {
+                        showGameOverMenu();
+                        return;
+                    }
+
+                    spawnMeteorFromAPI(); // 由 Java 決定是否 game over
+                }
+
+                meteor.remove();
+                activeMeteors = activeMeteors.filter(m => m !== meteorObj);
+                if (lockedTarget === meteorObj) lockedTarget = null;
+            }
+        }, Math.max(data.durationMs / 200, 30));
+
+        // ❗重點：只有在 Java 回傳 gameOver = false 時才進入這裡
+        if (!data.gameOver) {
+            setTimeout(spawnMeteorFromAPI, data.durationMs);
+        }
+    }
+
+    // 遊戲開始
+    spawnMeteorFromAPI();
+</script>
 </body>
 </html>
