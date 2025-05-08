@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Play Game</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: black;
+            color: white;
+            text-align: center;
+        }
+        .meteor {
+            font-size: 2em;
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: fall 5s linear forwards;
+        }
+        @keyframes fall {
+            0% { top: 0; }
+            100% { top: 500px; opacity: 0; }
+        }
+        #explosion {
+            display: none;
+            color: yellow;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🧠 Vocabulary Game</h1>
+
+<div id="gameArea">
+    <div id="meteor" class="meteor" th:text="${word}">apple</div>
+</div>
+
+<br>
+<input type="text" id="inputBox" placeholder="Type the word here">
+<div id="explosion" th:text="${definition}">蘋果</div>
+
+<script>
+    const word = /*[[${word}]]*/ 'apple';
+    const input = document.getElementById("inputBox");
+    const meteor = document.getElementById("meteor");
+    const explosion = document.getElementById("explosion");
+
+    input.addEventListener("input", () => {
+        if (input.value.trim().toLowerCase() === word.toLowerCase()) {
+            meteor.style.display = "none";
+            explosion.style.display = "block";
+        }
+    });
+</script>
+
+</body>
+</html>

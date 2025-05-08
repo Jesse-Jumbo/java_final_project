@@ -14,7 +14,7 @@
 ---
 ## Requirements
 - Java 17+
-- Maven or Gradle (建議使用 Spring Initializr)
+- Maven or Gradle (建議使用 [Spring Initializr](https://start.spring.io/))
 - Spring Boot 3.x
 
 開發工具：IntelliJ IDEA / VSCode / Eclipse

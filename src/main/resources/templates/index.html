@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Vocabulary Typing Game</title>
+</head>
+<body>
+<h1>Vocabulary Typing Game</h1>
+
+<h2>今天的單字</h2>
+<p><strong th:text="${word}">apple</strong></p>
+<p>解釋：<span th:text="${definition}">蘋果</span></p>
+
+<a href="/play">👉 開始遊戲</a>
+</body>
+</html>
