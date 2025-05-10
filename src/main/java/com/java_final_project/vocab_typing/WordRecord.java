@@ -5,6 +5,7 @@ import java.util.List;
 public class WordRecord {
     public String word;
     public String definition;
+    public String group;
     public List<String> history;
     public List<String> nextDates;
     public String status;

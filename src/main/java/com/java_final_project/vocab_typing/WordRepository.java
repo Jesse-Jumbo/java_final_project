@@ -6,9 +6,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 public class WordRepository {
@@ -36,27 +38,27 @@ public class WordRepository {
         }
     }
 
-    public List<WordRecord> getTodayWords(int limit, int requiredTimesPerWord) {
+    public List<WordRecord> getTodayWords(String group, int limit, int repeat) {
         String today = LocalDate.now().toString();
         List<WordRecord> repeated = allWords.stream()
+                .filter(w -> w.group.equalsIgnoreCase(group))
                 .filter(w -> w.status.equals("in-progress") && w.nextDates.contains(today))
-                .flatMap(w -> java.util.stream.IntStream.range(0, requiredTimesPerWord).mapToObj(i -> {
+                .flatMap(w -> IntStream.range(0, repeat).mapToObj(i -> {
                     WordRecord clone = new WordRecord();
                     clone.word = w.word;
                     clone.definition = w.definition;
-                    clone.history = w.history;
-                    clone.nextDates = w.nextDates;
+                    clone.group = w.group;
+                    clone.history = new ArrayList<>(w.history);
+                    clone.nextDates = new ArrayList<>(w.nextDates);
                     clone.status = w.status;
                     return clone;
                 }))
                 .collect(Collectors.toList());
 
-        // 打亂題目順序
         Collections.shuffle(repeated);
-
-        // 限制總數
-        return repeated.stream().limit(limit * requiredTimesPerWord).collect(Collectors.toList());
+        return repeated.stream().limit(limit * repeat).collect(Collectors.toList());
     }
+
 
 
     public void markReviewedToday(WordRecord word) {

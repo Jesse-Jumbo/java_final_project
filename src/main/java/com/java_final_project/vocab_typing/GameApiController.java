@@ -31,4 +31,10 @@ public class GameApiController {
     public void markDefeated(@RequestBody String word) {
         gameService.markDefeated(word);
     }
+
+    // 選擇牌組 API
+    @PostMapping("/select-group")
+    public void selectGroup(@RequestBody String group) {
+        gameService.setGroup(group);
+    }
 }

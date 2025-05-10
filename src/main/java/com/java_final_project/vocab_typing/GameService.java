@@ -14,10 +14,16 @@ public class GameService {
     private final int repeatPerWord = 3; // 每個單字出現 3 次
     private static final int MAX_LIVES = 10;
     private int lives = MAX_LIVES;
+    private String selectedGroup = "daily"; // 預設 daily
+
+    public void setGroup(String group) {
+        this.selectedGroup = group;
+        resetGame();
+    }
 
     public GameService(WordRepository repo) {
         this.wordRepository = repo;
-        this.wordQueue = new LinkedList<>(repo.getTodayWords(maxPerDay, repeatPerWord));
+        this.wordQueue = new LinkedList<>(repo.getTodayWords(selectedGroup, maxPerDay, repeatPerWord));
         this.reviewedToday = new ArrayList<>();
     }
 
@@ -40,7 +46,7 @@ public class GameService {
         lives = MAX_LIVES;
         wordQueue.clear();
         reviewedToday.clear();
-        wordQueue.addAll(wordRepository.getTodayWords(maxPerDay, repeatPerWord));
+        wordQueue.addAll(wordRepository.getTodayWords(selectedGroup, maxPerDay, repeatPerWord));
     }
 
     public WordGameState loseLife() {

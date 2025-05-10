@@ -2,7 +2,7 @@ package com.java_final_project.vocab_typing;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class GamePageController {
@@ -17,6 +17,12 @@ public class GamePageController {
     @GetMapping("/")
     public String home() {
         return "home"; // 對應 templates/home.html
+    }
+
+    @PostMapping("/select")
+    public String selectGroup(@RequestParam("group") String group, Model model) {
+        gameService.setGroup(group);
+        return "redirect:/play";
     }
 
     // 遊戲畫面

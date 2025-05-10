@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Welcome</title>
+    <title>選擇單字牌組</title>
     <style>
         body {
             background-color: black;
@@ -36,7 +36,12 @@
     </style>
 </head>
 <body>
-<h1>🚀 Vocabulary Typing Game</h1>
-<a href="/play" class="button">開始遊戲</a>
+<h2>🚀 Vocabulary Typing Game</h2>
+<h1>請選擇你今天要複習的單字主題：</h1>
+<form method="post" action="/select">
+    <button type="submit" name="group" value="daily">日常用單字</button>
+    <button type="submit" name="group" value="travel">旅遊用單字</button>
+    <button type="submit" name="group" value="work">工作用單字</button>
+</form>
 </body>
 </html>
