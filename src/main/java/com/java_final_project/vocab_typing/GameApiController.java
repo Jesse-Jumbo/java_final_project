@@ -19,12 +19,16 @@ public class GameApiController {
 
     @PostMapping("/life/lost")
     public WordGameState loseLife() {
-        gameService.loseLife();
-        return gameService.nextWord();
+        return gameService.loseLife();
     }
 
     @PostMapping("/reset")
     public void resetGame() {
         gameService.resetGame();
+    }
+
+    @PostMapping("/defeat")
+    public void markDefeated(@RequestBody String word) {
+        gameService.markDefeated(word);
     }
 }

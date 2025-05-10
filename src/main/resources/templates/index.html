@@ -150,7 +150,19 @@
         setTimeout(() => bullet.remove(), 600);
     }
 
-    document.addEventListener("keydown", (event) => {
+    async function handleDefeat(word) {
+        try {
+            await fetch("/api/defeat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(word)
+            });
+        } catch (err) {
+            console.error("回報 defeat 失敗：", err);
+        }
+    }
+
+    document.addEventListener("keydown", async (event) => {
         const key = event.key.toLowerCase();
 
         if (!lockedTarget) {
@@ -174,6 +186,7 @@
                 if (lockedTarget.remaining.length > 0) {
                     lockedTarget.element.innerHTML = renderMeteorText(lockedTarget);
                 } else {
+                    await handleDefeat(lockedTarget.originalWord);
                     lockedTarget.element.innerText = lockedTarget.definition;
                     lockedTarget.element.style.color = "yellow";
                     lockedTarget = null;
@@ -183,6 +196,7 @@
             }
         }
     });
+
 
     function renderMeteorTextFromString(str) {
         return [...str].map(ch => `<span>${ch}</span>`).join("");
@@ -198,21 +212,31 @@
 
     function restartGame() {
         updateLives(10); // 預設 10 條命
+
+        // 清除下一題排程
         if (nextSpawnTimeout) {
             clearTimeout(nextSpawnTimeout);
             nextSpawnTimeout = null;
         }
 
+        // 停止所有隕石掉落動畫 & 移除畫面上的隕石
+        activeMeteors.forEach(meteor => {
+            if (meteor.fallInterval) clearInterval(meteor.fallInterval);
+            meteor.element.remove();
+        });
+
+        // 清空狀態
+        activeMeteors = [];
+        lockedTarget = null;
+        isGameOver = false;
+
+        // 隱藏 Game Over 菜單
+        document.getElementById("gameOverMenu").style.display = "none";
+
+        // 重置後端狀態，並開始新一輪
         fetch("/api/reset", { method: "POST" })
             .then(() => {
-                // 清空現有隕石與遊戲狀態
-                activeMeteors.forEach(m => m.element.remove());
-                activeMeteors = [];
-                lockedTarget = null;
-                isGameOver = false;
-                document.getElementById("gameOverMenu").style.display = "none";
-                // 馬上重新取得新一顆隕石 + 更新生命
-                spawnMeteorFromAPI(); // 重新開始遊戲
+                spawnMeteorFromAPI(); // 馬上出第一題
             });
     }
 
@@ -241,30 +265,31 @@
         const meteorObj = {
             element: meteor,
             remaining: data.word,
+            originalWord: data.word,
             definition: data.definition,
-            y: 0
+            y: 0,
+            fallInterval: null
         };
 
         activeMeteors.push(meteorObj);
 
-        const fallInterval = setInterval(async () => {
+        meteorObj.fallInterval = setInterval(async () => {
             meteorObj.y += 2;
             meteor.style.top = `${meteorObj.y}px`;
 
             if (meteorObj.y >= window.innerHeight - 50) {
-                clearInterval(fallInterval);
+                clearInterval(meteorObj.fallInterval);
 
                 if (meteorObj.remaining.length > 0) {
                     const lostRes = await fetch("/api/life/lost", { method: "POST" });
                     const lostData = await lostRes.json();
 
-                    updateLives(lostData.lives);
                     if (lostData.gameOver) {
                         showGameOverMenu();
                         return;
                     }
-
-                    spawnMeteorFromAPI(); // 由 Java 決定是否 game over
+                    updateLives(lostData.lives);
+                    spawnMeteorFromAPI(); // 繼續出下一題
                 }
 
                 meteor.remove();
@@ -275,7 +300,7 @@
 
         // ❗重點：只有在 Java 回傳 gameOver = false 時才進入這裡
         if (!data.gameOver) {
-            setTimeout(spawnMeteorFromAPI, data.durationMs);
+            nextSpawnTimeout = setTimeout(spawnMeteorFromAPI, data.durationMs);
         }
     }
 

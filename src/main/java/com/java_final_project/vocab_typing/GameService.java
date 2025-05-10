@@ -1,72 +1,64 @@
 package com.java_final_project.vocab_typing;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
+import org.springframework.stereotype.Service;
 
-@Component
+import java.util.*;
+
+@Service
 public class GameService {
-
-    // 假資料詞庫（未來用資料庫或檔案替換）
-    private final List<Word> mockWords = List.of(
-            new Word("apple", "蘋果"),
-            new Word("run", "跑步"),
-            new Word("banana", "香蕉"),
-            new Word("jump", "跳躍"),
-            new Word("computer", "電腦"),
-            new Word("school", "學校"),
-            new Word("book", "書"),
-            new Word("table", "桌子"),
-            new Word("chair", "椅子"),
-            new Word("window", "窗戶")
-    );
-
-    private int currentIndex = 0;
+    private final WordRepository wordRepository;
+    private final Queue<WordRecord> wordQueue;
+    private final List<WordRecord> reviewedToday;
     private int callCount = 0;
-    private int lives = 10;
+    private final int maxPerDay = 10;
+    private final int repeatPerWord = 3; // 每個單字出現 3 次
+    private static final int MAX_LIVES = 10;
+    private int lives = MAX_LIVES;
 
-    // 取得下一個單字（會循環）
-    public WordGameState nextWord() {
-        callCount++;
-
-        Word word = mockWords.get(currentIndex);
-        currentIndex = (currentIndex + 1) % mockWords.size();
-
-        // 初始 30 秒，最多加快至 10 秒
-        int maxDelay = 30000;
-        int minDelay = 10000;
-        int duration = maxDelay - Math.min(callCount * 1000, maxDelay - minDelay);
-
-        boolean gameOver = lives <= 0;
-        if (gameOver) {
-            return new WordGameState("", "", 0, lives, true);
-        }
-        return new WordGameState(
-                word.word(),
-                word.definition(),
-                duration,
-                lives,
-                gameOver
-        );
+    public GameService(WordRepository repo) {
+        this.wordRepository = repo;
+        this.wordQueue = new LinkedList<>(repo.getTodayWords(maxPerDay, repeatPerWord));
+        this.reviewedToday = new ArrayList<>();
     }
 
-    public void loseLife() {
-        lives--;
+    public WordGameState nextWord() {
+        if (wordQueue.isEmpty()) {
+            wordRepository.commitReviewedWords(reviewedToday);
+            return new WordGameState("", "", 0, lives, true);
+        }
+
+        WordRecord word = wordQueue.poll();
+        reviewedToday.add(word);
+
+        callCount++;
+        int delay = 5000 - Math.min(callCount * 200, 2000); // 5s to 3s
+        return new WordGameState(word.word, word.definition, delay, lives, false);
     }
 
     public void resetGame() {
         callCount = 0;
-        currentIndex = 0;
-        lives = 10;
+        lives = MAX_LIVES;
+        wordQueue.clear();
+        reviewedToday.clear();
+        wordQueue.addAll(wordRepository.getTodayWords(maxPerDay, repeatPerWord));
     }
 
-    public int getCurrentDelay() {
-        // 從第 1 次呼叫開始，依次縮短間隔秒數（最多快到 3 秒）
-        int delay = 5000 - Math.min(callCount * 100, 2000); // 最少 3000ms
-        return delay;
+    public WordGameState loseLife() {
+        if (!reviewedToday.isEmpty()) {
+            WordRecord last = reviewedToday.get(reviewedToday.size() - 1);
+            if (last.defeated) {
+                return new WordGameState("", "", 0, lives, false); // ✅ 不扣命
+            }
+        }
+        lives--;
+        boolean gameOver = lives <= 0;
+        return new WordGameState("", "", 0, lives, gameOver);
     }
 
-    // 檢查玩家輸入是否正確（大小寫忽略）
-    public boolean checkAnswer(String userInput, String correctWord) {
-        return userInput.trim().equalsIgnoreCase(correctWord);
+    public void markDefeated(String word) {
+        reviewedToday.stream()
+                .filter(w -> w.word.equalsIgnoreCase(word))
+                .forEach(w -> w.defeated = true);
     }
 }
+
