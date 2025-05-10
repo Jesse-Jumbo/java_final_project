@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -42,14 +43,14 @@ public class WordRepository {
         String today = LocalDate.now().toString();
         List<WordRecord> repeated = allWords.stream()
                 .filter(w -> w.group.equalsIgnoreCase(group))
-                .filter(w -> w.status.equals("in-progress") && w.nextDates.contains(today))
+                .filter(w -> w.status.equals("in-progress") && today.equals(w.nextDate))
                 .flatMap(w -> IntStream.range(0, repeat).mapToObj(i -> {
                     WordRecord clone = new WordRecord();
                     clone.word = w.word;
                     clone.definition = w.definition;
                     clone.group = w.group;
                     clone.history = new ArrayList<>(w.history);
-                    clone.nextDates = new ArrayList<>(w.nextDates);
+                    clone.nextDate = w.nextDate;
                     clone.status = w.status;
                     return clone;
                 }))
@@ -68,18 +69,20 @@ public class WordRepository {
         }
 
         int reviewCount = word.history.size();
-        int[] intervals = {2, 4, 8, 15, 30};
+        int[] intervals = {2, 4, 8, 15, 30, 30};
+
         if (reviewCount <= intervals.length) {
-            LocalDate nextDay = LocalDate.now().plusDays(intervals[reviewCount - 1]);
-            word.nextDates.add(nextDay.toString());
+            LocalDate next = LocalDate.now().plusDays(intervals[reviewCount - 1]);
+            word.nextDate = next.toString();
         } else {
-            word.status = "mastered";
+            word.status = "mastered"; // 畢業
+            word.nextDate = null;
         }
     }
 
     public void commitReviewedWords(List<WordRecord> reviewed) {
         reviewed.stream()
-                .map(r -> r.word) // 過濾重複單字
+                .map(r -> r.word)
                 .distinct()
                 .forEach(word -> {
                     allWords.stream()
@@ -89,5 +92,15 @@ public class WordRepository {
                 });
         save();
     }
+
+    public List<String> getAllGroups() {
+        return allWords.stream()
+                .map(w -> w.group)
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
 }
 

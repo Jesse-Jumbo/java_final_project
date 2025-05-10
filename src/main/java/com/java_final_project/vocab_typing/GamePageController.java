@@ -4,20 +4,28 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 public class GamePageController {
 
     private final GameService gameService;
+    private final WordRepository wordRepository;
 
-    public GamePageController(GameService gameService) {
+    public GamePageController(GameService gameService, WordRepository wordRepository) {
         this.gameService = gameService;
+        this.wordRepository = wordRepository;
     }
+
 
     // 首頁畫面（非遊戲邏輯）
     @GetMapping("/")
-    public String home() {
-        return "home"; // 對應 templates/home.html
+    public String home(Model model) {
+        List<String> groups = wordRepository.getAllGroups();
+        model.addAttribute("groups", groups);
+        return "home";
     }
+
 
     @PostMapping("/select")
     public String selectGroup(@RequestParam("group") String group, Model model) {

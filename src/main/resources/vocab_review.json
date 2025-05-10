@@ -3,7 +3,7 @@
   "definition" : "蘋果",
   "group" : "daily",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -12,7 +12,7 @@
   "definition" : "香蕉",
   "group" : "daily",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -21,7 +21,7 @@
   "definition" : "咖啡",
   "group" : "daily",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -30,7 +30,7 @@
   "definition" : "麵包",
   "group" : "daily",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -39,7 +39,7 @@
   "definition" : "水",
   "group" : "daily",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -48,7 +48,7 @@
   "definition" : "車子",
   "group" : "daily",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -57,7 +57,7 @@
   "definition" : "筆",
   "group" : "daily",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -66,7 +66,7 @@
   "definition" : "窗戶",
   "group" : "daily",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -75,7 +75,7 @@
   "definition" : "椅子",
   "group" : "daily",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -84,7 +84,7 @@
   "definition" : "書",
   "group" : "daily",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -93,7 +93,7 @@
   "definition" : "護照",
   "group" : "travel",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -102,7 +102,7 @@
   "definition" : "行李",
   "group" : "travel",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -111,7 +111,7 @@
   "definition" : "旅館",
   "group" : "travel",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -120,7 +120,7 @@
   "definition" : "地圖",
   "group" : "travel",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -129,7 +129,7 @@
   "definition" : "票",
   "group" : "travel",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -138,7 +138,7 @@
   "definition" : "火車",
   "group" : "travel",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -147,7 +147,7 @@
   "definition" : "導遊",
   "group" : "travel",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -156,7 +156,7 @@
   "definition" : "班機",
   "group" : "travel",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -165,7 +165,7 @@
   "definition" : "簽證",
   "group" : "travel",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -174,7 +174,7 @@
   "definition" : "相機",
   "group" : "travel",
   "history" : [ "2025-05-10" ],
-  "nextDates" : [ "2025-05-10", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12", "2025-05-12" ],
+  "nextDate" : "2025-05-10",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -182,8 +182,8 @@
   "word" : "meeting",
   "definition" : "會議",
   "group" : "work",
-  "history" : [ ],
-  "nextDates" : [ "2025-05-10" ],
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -191,8 +191,8 @@
   "word" : "resume",
   "definition" : "履歷",
   "group" : "work",
-  "history" : [ ],
-  "nextDates" : [ "2025-05-10" ],
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -200,8 +200,8 @@
   "word" : "email",
   "definition" : "電子郵件",
   "group" : "work",
-  "history" : [ ],
-  "nextDates" : [ "2025-05-10" ],
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -209,8 +209,8 @@
   "word" : "deadline",
   "definition" : "截止日期",
   "group" : "work",
-  "history" : [ ],
-  "nextDates" : [ "2025-05-10" ],
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -218,8 +218,8 @@
   "word" : "project",
   "definition" : "專案",
   "group" : "work",
-  "history" : [ ],
-  "nextDates" : [ "2025-05-10" ],
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -227,8 +227,8 @@
   "word" : "boss",
   "definition" : "老闆",
   "group" : "work",
-  "history" : [ ],
-  "nextDates" : [ "2025-05-10" ],
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -236,8 +236,8 @@
   "word" : "report",
   "definition" : "報告",
   "group" : "work",
-  "history" : [ ],
-  "nextDates" : [ "2025-05-10" ],
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -245,8 +245,8 @@
   "word" : "office",
   "definition" : "辦公室",
   "group" : "work",
-  "history" : [ ],
-  "nextDates" : [ "2025-05-10" ],
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -254,8 +254,8 @@
   "word" : "colleague",
   "definition" : "同事",
   "group" : "work",
-  "history" : [ ],
-  "nextDates" : [ "2025-05-10" ],
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
@@ -263,8 +263,17 @@
   "word" : "schedule",
   "definition" : "行程表",
   "group" : "work",
-  "history" : [ ],
-  "nextDates" : [ "2025-05-10" ],
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
+  "status" : "in-progress",
+  "defeated" : false,
+  "shownCount" : 0
+}, {
+  "word" : "test",
+  "definition" : "測試",
+  "group" : "test",
+  "history" : [ "2025-05-10" ],
+  "nextDate" : "2025-05-12",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0

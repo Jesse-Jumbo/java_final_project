@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>選擇單字牌組</title>
@@ -20,7 +20,7 @@
             margin-bottom: 2rem;
         }
 
-        a.button {
+        form button {
             text-decoration: none;
             background-color: white;
             color: black;
@@ -28,9 +28,10 @@
             font-size: 1.5rem;
             border-radius: 10px;
             transition: background-color 0.3s;
+            margin: 0.5rem;
         }
 
-        a.button:hover {
+        form button:hover {
             background-color: #ccc;
         }
     </style>
@@ -39,9 +40,9 @@
 <h2>🚀 Vocabulary Typing Game</h2>
 <h1>請選擇你今天要複習的單字主題：</h1>
 <form method="post" action="/select">
-    <button type="submit" name="group" value="daily">日常用單字</button>
-    <button type="submit" name="group" value="travel">旅遊用單字</button>
-    <button type="submit" name="group" value="work">工作用單字</button>
+    <div th:each="group : ${groups}">
+        <button type="submit" name="group" th:value="${group}" th:text="${group}"></button>
+    </div>
 </form>
 </body>
 </html>
