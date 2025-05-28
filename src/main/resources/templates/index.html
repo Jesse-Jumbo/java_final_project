@@ -17,13 +17,13 @@
             height: 100vh;
         }
 
-        #gameOverMenu {
+        #gameOverMenu, #gameCompletedMenu, #alreadyCompletedMenu {
             position: absolute;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(255, 255, 255, 0.85);
             display: none;
             justify-content: center;
             align-items: center;
@@ -102,6 +102,22 @@
     <div class="menu">
         <h1>💀 Game Over</h1>
         <button onclick="restartGame()">🔁 重新開始</button>
+        <button onclick="goHome()">🏠 回到首頁</button>
+    </div>
+</div>
+
+<div id="gameCompletedMenu" style="display: none;">
+    <div class="menu">
+        <h1>🎉 恭喜複習完畢！</h1>
+        <button onclick="restartGame()">🔁 再來一輪</button>
+        <button onclick="goHome()">🏠 回到首頁</button>
+    </div>
+</div>
+
+<div id="alreadyCompletedMenu" style="display: none;">
+    <div class="menu">
+        <h1>🎓 今日已完成複習</h1>
+        <button onclick="restartGame()">🔁 再來一輪</button>
         <button onclick="goHome()">🏠 回到首頁</button>
     </div>
 </div>
@@ -210,9 +226,24 @@
         }
     }
 
-    function restartGame() {
-        updateLives(10); // 預設 10 條命
+    function showGameCompletedMenu() {
+        document.getElementById("gameCompletedMenu").style.display = "flex";
+        if (nextSpawnTimeout) {
+            clearTimeout(nextSpawnTimeout);
+            nextSpawnTimeout = null;
+        }
+    }
 
+    function showAlreadyCompletedMenu() {
+        document.getElementById("alreadyCompletedMenu").style.display = "flex";
+        if (nextSpawnTimeout) {
+            clearTimeout(nextSpawnTimeout);
+            nextSpawnTimeout = null;
+        }
+    }
+
+
+    function restartGame() {
         // 清除下一題排程
         if (nextSpawnTimeout) {
             clearTimeout(nextSpawnTimeout);
@@ -232,12 +263,16 @@
 
         // 隱藏 Game Over 菜單
         document.getElementById("gameOverMenu").style.display = "none";
+        document.getElementById("gameCompletedMenu").style.display = "none";
+        document.getElementById("alreadyCompletedMenu").style.display = "none";
 
-        // 重置後端狀態，並開始新一輪
-        fetch("/api/reset", { method: "POST" })
-            .then(() => {
-                spawnMeteorFromAPI(); // 馬上出第一題
-            });
+        fetch("/api/reset", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "clearHistory=true"
+        })
     }
 
     function goHome() {
@@ -248,10 +283,19 @@
         const res = await fetch("/api/next-word");
         const data = await res.json();
 
+        console.log("👉 取得的資料", data);
         if (data.gameOver) {
-            showGameOverMenu();
+            if (data.lives > 0 && activeMeteors.length === 0) {
+                // 從頭就沒有出現題目 → 今天已完成複習
+                showAlreadyCompletedMenu();
+            } else if (data.lives > 0) {
+                showGameCompletedMenu();
+            } else {
+                showGameOverMenu();
+            }
             return;
         }
+
 
         updateLives(data.lives);
 

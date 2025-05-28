@@ -11,25 +11,29 @@ public class GameService {
     private final List<WordRecord> reviewedToday;
     private int callCount = 0;
     private final int maxPerDay = 10;
-    private final int repeatPerWord = 3; // 每個單字出現 3 次
+    private final int repeatPerWord = 3;
     private static final int MAX_LIVES = 10;
     private int lives = MAX_LIVES;
-    private String selectedGroup = "daily"; // 預設 daily
+    private String selectedGroup = "daily";
+    private boolean completedOnce = false;
+
+    public GameService(WordRepository repo) {
+        this.wordRepository = repo;
+        this.wordQueue = new LinkedList<>(repo.getTodayWords(selectedGroup, maxPerDay, repeatPerWord, false));
+        this.reviewedToday = new ArrayList<>();
+    }
 
     public void setGroup(String group) {
         this.selectedGroup = group;
         resetGame();
     }
 
-    public GameService(WordRepository repo) {
-        this.wordRepository = repo;
-        this.wordQueue = new LinkedList<>(repo.getTodayWords(selectedGroup, maxPerDay, repeatPerWord));
-        this.reviewedToday = new ArrayList<>();
-    }
-
     public WordGameState nextWord() {
         if (wordQueue.isEmpty()) {
-            wordRepository.commitReviewedWords(reviewedToday);
+            if (!completedOnce && !reviewedToday.isEmpty()) {
+                completedOnce = true;
+                wordRepository.commitReviewedWords(reviewedToday, true);
+            }
             return new WordGameState("", "", 0, lives, true);
         }
 
@@ -42,18 +46,39 @@ public class GameService {
     }
 
     public void resetGame() {
+        resetGame(false);
+    }
+
+    public void resetGame(boolean clearHistory) {
+        System.out.println("🔥 resetGame called with clearHistory = " + clearHistory);
+
+        if (!clearHistory) {
+            wordRepository.commitReviewedWords(reviewedToday, true);
+        } else {
+            wordRepository.commitReviewedWords(reviewedToday, false);
+            wordRepository.load(); // 重讀 JSON
+        }
+
         callCount = 0;
         lives = MAX_LIVES;
+        completedOnce = false;
         wordQueue.clear();
         reviewedToday.clear();
-        wordQueue.addAll(wordRepository.getTodayWords(selectedGroup, maxPerDay, repeatPerWord));
+
+        wordQueue.addAll(
+                wordRepository.getTodayWords(selectedGroup, maxPerDay, repeatPerWord, clearHistory)
+        );
+
+        System.out.println("✅ Reset 成功，載入單字：" + wordQueue.size());
     }
+
+
 
     public WordGameState loseLife() {
         if (!reviewedToday.isEmpty()) {
             WordRecord last = reviewedToday.get(reviewedToday.size() - 1);
             if (last.defeated) {
-                return new WordGameState("", "", 0, lives, false); // ✅ 不扣命
+                return new WordGameState("", "", 0, lives, false); // 不扣命
             }
         }
         lives--;
@@ -67,4 +92,3 @@ public class GameService {
                 .forEach(w -> w.defeated = true);
     }
 }
-
