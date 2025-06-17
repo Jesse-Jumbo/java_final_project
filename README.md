@@ -186,3 +186,8 @@ cd java_final_project
 1. [Jesse](https://github.com/Jesse-Jumbo)：後端
 2. [Mihsia](https://github.com/mihsia0506)：前端
 3. [Chingyong](https://github.com/Chingyong0905)：資料庫設計
+---
+
+### Contributor Note 20250617
+這段文字由 ChingYong 在 `branch-test` 分支中加入，用於練習 Git 分支開發與 Pull Request 流程。
+可刪除。
