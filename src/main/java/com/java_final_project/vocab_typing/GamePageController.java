@@ -10,9 +10,9 @@ import java.util.List;
 public class GamePageController {
 
     private final GameService gameService;
-    private final WordRepository wordRepository;
+    private final WordRepository_jumbo wordRepository;
 
-    public GamePageController(GameService gameService, WordRepository wordRepository) {
+    public GamePageController(GameService gameService, WordRepository_jumbo wordRepository) {
         this.gameService = gameService;
         this.wordRepository = wordRepository;
     }

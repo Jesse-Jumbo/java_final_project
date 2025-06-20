@@ -11,15 +11,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Component
-public class WordRepository {
+public class WordRepository_jumbo {
     private static final String FILE_PATH = "src/main/resources/vocab_review.json";
     private final ObjectMapper objectMapper = new ObjectMapper();
     private List<WordRecord> allWords;
 
-    public WordRepository() {
+    public WordRepository_jumbo() {
         load();
     }
 
