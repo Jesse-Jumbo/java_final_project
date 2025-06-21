@@ -1,6 +1,8 @@
 package com.java_final_project.vocab_typing;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -92,5 +94,40 @@ public class GameService {
     //給瀏覽字卡用
     public List<WordRecord> getWordsByGroup(String group) {
         return wordRepository.previewWordset(group);
+    }
+
+    public void setGroupFromReviewApi(String userName, String group) {
+        // call /api/review/today?userName=xxx&setName=xxx
+        String urlToday = String.format("http://localhost:8080/api/review/today?userName=%s&setName=%s", userName, group);
+        ResponseEntity<List> response = new RestTemplate().getForEntity(urlToday, List.class);
+        List<Map<String, Object>> todayWords = response.getBody();
+
+        if (todayWords.size() < 10) {
+            // 補 unplayed
+            String urlUnplayed = String.format("http://localhost:8080/api/review/unplayed?userName=%s", userName);
+            ResponseEntity<List> resUnplayed = new RestTemplate().getForEntity(urlUnplayed, List.class);
+            List<Map<String, Object>> unplayed = resUnplayed.getBody();
+            Collections.shuffle(unplayed);
+
+            for (Map<String, Object> word : unplayed) {
+                if (todayWords.size() >= 10) break;
+                todayWords.add(word);
+            }
+        }
+
+        // 初始化遊戲資料
+        callCount = 0;
+        lives = MAX_LIVES;
+        reviewedToday.clear();
+        wordQueue.clear();
+
+        for (Map<String, Object> wordData : todayWords) {
+            WordRecord record = new WordRecord();
+            record.word = (String) wordData.get("word");
+            record.definition = (String) wordData.get("definition");
+            wordQueue.add(record);
+        }
+
+        completedOnce = false;
     }
 }
