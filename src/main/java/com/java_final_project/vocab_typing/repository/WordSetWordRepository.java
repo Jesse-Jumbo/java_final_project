@@ -13,6 +13,8 @@ import java.util.List;
 public interface WordSetWordRepository extends JpaRepository<WordSetWord, Long> {
     List<WordSetWord> findByWordSetId(Long wordSetId);
     List<WordSetWord> findByWordId(Long wordId);
+    List<WordSetWord> findByWordSetSetName(String setName);
+
     // 使用 JPQL 查詢符合使用者和 set 名稱的單字 ID
 
     @Query("SELECT w.word.id FROM WordSetWord w " +
