@@ -17,39 +17,13 @@
             height: 100vh;
         }
 
-        #gameCompletedMenu {
+        #gameCompletedMenu, #noWordsMenu, #gameOverMenu {
             position: absolute;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
             background: rgba(255, 255, 255, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        #noWordsMenu {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        #gameOverMenu {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
             display: none;
             justify-content: center;
             align-items: center;
@@ -249,6 +223,7 @@
     }
 
     function showGameCompletedMenu() {
+        isGameOver = true;
         endTime = Date.now();
         const seconds = Math.floor((endTime - startTime) / 1000);
         const minutes = Math.floor(seconds / 60);
@@ -264,7 +239,9 @@
     }
 
 
-    function showGameOverMenu() {
+    function showGameOverMenu(latestLives = 0) {
+        isGameOver = true;
+        updateLives(latestLives);
         document.getElementById("gameOverMenu").style.display = "flex";
         if (nextSpawnTimeout) {
             clearTimeout(nextSpawnTimeout);
@@ -307,6 +284,7 @@
     }
 
     async function spawnMeteorFromAPI() {
+        if (isGameOver) return;  // ⚠️ 不再出新題
         const res = await fetch("/api/next-word");
         const data = await res.json();
         console.log(data); // 加上這一行看看實際回傳有沒有 completed
@@ -317,9 +295,10 @@
             showGameCompletedMenu();
             return;
         }else if (data.gameOver) {
-            showGameOverMenu();
+            showGameOverMenu(lostData.lives);
             return;
         }else if (data.noWords) {
+            isGameOver = true;
             document.getElementById("noWordsMenu").style.display = "flex";
             return;
         }
@@ -345,6 +324,11 @@
         activeMeteors.push(meteorObj);
 
         meteorObj.fallInterval = setInterval(async () => {
+            if (isGameOver) {
+                clearInterval(meteorObj.fallInterval);
+                meteor.remove();
+                return;
+            }
             meteorObj.y += 2;
             meteor.style.top = `${meteorObj.y}px`;
 
@@ -352,6 +336,7 @@
                 clearInterval(meteorObj.fallInterval);
 
                 if (meteorObj.remaining.length > 0) {
+                    if (isGameOver) return;
                     const lostRes = await fetch("/api/life/lost", { method: "POST" });
                     const lostData = await lostRes.json();
 

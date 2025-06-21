@@ -32,25 +32,33 @@ public class GameService {
     public WordGameState nextWord() {
         if (wordQueue.isEmpty()) {
             if (reviewedToday.isEmpty()) {
+                // 沒有可複習的單字，直接回傳 noWords=true
                 return new WordGameState("", "", 0, lives, false, false, true);
             }
-            if (!completedOnce && !reviewedToday.isEmpty()) {
+
+            if (!completedOnce) {
                 completedOnce = true;
                 wordRepository.commitReviewedWords(reviewedToday, true);
-                return new WordGameState("", "", 0, lives, false, true, false); // ✅ 遊戲完成（勝利）
+                return new WordGameState("", "", 0, lives, false, true, false); // 勝利畫面
             } else {
-                return new WordGameState("", "", 0, lives, true, false, false); // 💀 Game Over
+                boolean gameOver = lives <= 0;
+                return new WordGameState("", "", 0, lives, gameOver, false, false);
             }
         }
 
-
         WordRecord word = wordQueue.poll();
-        reviewedToday.add(word);
+        if (word == null) {
+            // 防止 NPE，這應該理論上不會發生，但為保險加上
+            return new WordGameState("", "", 0, lives, false, false, true);
+        }
 
+        reviewedToday.add(word);
         callCount++;
         int delay = 5000 - Math.min(callCount * 200, 2000); // 5s to 3s
+
         return new WordGameState(word.word, word.definition, delay, lives, false, false, false);
     }
+
 
     public void resetGame() {
         callCount = 0;
@@ -66,6 +74,9 @@ public class GameService {
             if (last.defeated) {
                 return new WordGameState("", "", 0, lives, false, false, false); // ✅ 不扣命
             }
+        }
+        if (lives <= 0) {
+            return new WordGameState("", "", 0, lives, true, false, false); // 避免再扣命
         }
         lives--;
         boolean gameOver = lives <= 0;
