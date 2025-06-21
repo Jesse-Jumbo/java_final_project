@@ -200,6 +200,49 @@ public class ReviewLogController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/unplayed-by-set")
+    public ResponseEntity<?> getUnplayedWordsBySet(
+            @RequestParam String userName,
+            @RequestParam String setName) {
+
+        // 1. 查 user
+        Optional<User> userOpt = userRepository.findByName(userName);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("找不到使用者: " + userName);
+        }
+        String userId = userOpt.get().getId();
+
+        // 2. 驗證該 setName 是否存在於 word_set_word 表中
+        List<Long> allWordIds = wordSetWordRepository.findWordIdsBySystemOrUser(userId, setName);
+        if (allWordIds.isEmpty()) {
+            return ResponseEntity.badRequest().body("❌ 找不到單字集：" + setName);
+        }
+
+        // 3. 查使用者已經複習過的單字 ID
+        List<Long> reviewedWordIds = reviewLogRepository.findExistingWordIds(userId, setName);
+
+        // 4. 過濾出尚未複習過的單字 ID
+        List<Long> unplayedIds = allWordIds.stream()
+                .filter(id -> !reviewedWordIds.contains(id))
+                .collect(Collectors.toList());
+
+        // 5. 查單字資訊
+        List<Map<String, String>> result = new ArrayList<>();
+        for (Long id : unplayedIds) {
+            Optional<Word> wordOpt = wordRepository.findById(id);
+            wordOpt.ifPresent(word -> {
+                Map<String, String> entry = new HashMap<>();
+                entry.put("setName", setName);
+                entry.put("word", word.getWord());
+                entry.put("definition", word.getDefinition());
+                result.add(entry);
+            });
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
+
 
     // ✅ 初始化 review_logs：加入新單字進入複習（避免重複）
     @PostMapping("/initialize")

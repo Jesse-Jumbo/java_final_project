@@ -103,9 +103,8 @@ public class GameService {
         List<Map<String, Object>> todayWords = response.getBody();
 
         if (todayWords.size() < 10) {
-            // 補 unplayed
-            String urlUnplayed = String.format("http://localhost:8080/api/review/unplayed?userName=%s", userName);
-            ResponseEntity<List> resUnplayed = new RestTemplate().getForEntity(urlUnplayed, List.class);
+            String urlUnplayedBySet = String.format("http://localhost:8080/api/review/unplayed-by-set?userName=%s&setName=%s", userName, group);
+            ResponseEntity<List> resUnplayed = new RestTemplate().getForEntity(urlUnplayedBySet, List.class);
             List<Map<String, Object>> unplayed = resUnplayed.getBody();
             Collections.shuffle(unplayed);
 

@@ -1,22 +1,25 @@
 [ {
+  "id" : 0,
   "word" : "apple",
   "definition" : "蘋果",
   "group" : "daily",
-  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21" ],
-  "nextDate" : "2025-06-29",
+  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21", "2025-06-22" ],
+  "nextDate" : "2025-07-07",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "banana",
   "definition" : "香蕉",
   "group" : "daily",
-  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21" ],
-  "nextDate" : "2025-06-29",
+  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21", "2025-06-22" ],
+  "nextDate" : "2025-07-07",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "coffee",
   "definition" : "咖啡",
   "group" : "daily",
@@ -26,24 +29,27 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "bread",
   "definition" : "麵包",
   "group" : "daily",
-  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21" ],
-  "nextDate" : "2025-06-29",
+  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21", "2025-06-22" ],
+  "nextDate" : "2025-07-07",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "water",
   "definition" : "水",
   "group" : "daily",
-  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21" ],
-  "nextDate" : "2025-06-29",
+  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21", "2025-06-22" ],
+  "nextDate" : "2025-07-07",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "car",
   "definition" : "車子",
   "group" : "daily",
@@ -53,42 +59,47 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "pen",
   "definition" : "筆",
   "group" : "daily",
-  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21" ],
-  "nextDate" : "2025-06-29",
+  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21", "2025-06-22" ],
+  "nextDate" : "2025-07-07",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "window",
   "definition" : "窗戶",
   "group" : "daily",
-  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21" ],
-  "nextDate" : "2025-06-29",
+  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21", "2025-06-22" ],
+  "nextDate" : "2025-07-07",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "chair",
   "definition" : "椅子",
   "group" : "daily",
-  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21" ],
-  "nextDate" : "2025-06-29",
+  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21", "2025-06-22" ],
+  "nextDate" : "2025-07-07",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "book",
   "definition" : "書",
   "group" : "daily",
-  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21" ],
-  "nextDate" : "2025-06-29",
+  "history" : [ "2025-05-10", "2025-05-14", "2025-06-21", "2025-06-22" ],
+  "nextDate" : "2025-07-07",
   "status" : "in-progress",
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "passport",
   "definition" : "護照",
   "group" : "travel",
@@ -98,6 +109,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "luggage",
   "definition" : "行李",
   "group" : "travel",
@@ -107,6 +119,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "hotel",
   "definition" : "旅館",
   "group" : "travel",
@@ -116,6 +129,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "map",
   "definition" : "地圖",
   "group" : "travel",
@@ -125,6 +139,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "ticket",
   "definition" : "票",
   "group" : "travel",
@@ -134,6 +149,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "train",
   "definition" : "火車",
   "group" : "travel",
@@ -143,6 +159,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "guide",
   "definition" : "導遊",
   "group" : "travel",
@@ -152,6 +169,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "flight",
   "definition" : "班機",
   "group" : "travel",
@@ -161,6 +179,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "visa",
   "definition" : "簽證",
   "group" : "travel",
@@ -170,6 +189,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "camera",
   "definition" : "相機",
   "group" : "travel",
@@ -179,6 +199,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "meeting",
   "definition" : "會議",
   "group" : "work",
@@ -188,6 +209,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "resume",
   "definition" : "履歷",
   "group" : "work",
@@ -197,6 +219,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "email",
   "definition" : "電子郵件",
   "group" : "work",
@@ -206,6 +229,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "deadline",
   "definition" : "截止日期",
   "group" : "work",
@@ -215,6 +239,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "project",
   "definition" : "專案",
   "group" : "work",
@@ -224,6 +249,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "boss",
   "definition" : "老闆",
   "group" : "work",
@@ -233,6 +259,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "report",
   "definition" : "報告",
   "group" : "work",
@@ -242,6 +269,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "office",
   "definition" : "辦公室",
   "group" : "work",
@@ -251,6 +279,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "colleague",
   "definition" : "同事",
   "group" : "work",
@@ -260,6 +289,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "schedule",
   "definition" : "行程表",
   "group" : "work",
@@ -269,6 +299,7 @@
   "defeated" : false,
   "shownCount" : 0
 }, {
+  "id" : 0,
   "word" : "test",
   "definition" : "測試",
   "group" : "test",
