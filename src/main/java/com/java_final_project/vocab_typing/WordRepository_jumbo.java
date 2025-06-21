@@ -9,9 +9,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -60,7 +59,7 @@ public class WordRepository_jumbo {
                     clone.word = w.word;
                     clone.definition = w.definition;
                     clone.group = w.group;
-                    clone.history = new ArrayList<>(w.history);
+                    clone.review_count = w.review_count;
                     clone.nextDate = w.nextDate;
                     clone.status = w.status;
                     return clone;
@@ -71,35 +70,49 @@ public class WordRepository_jumbo {
         return repeated.stream().limit((long)limit * repeat).collect(Collectors.toList());
     }
 
-    public void markReviewedToday(WordRecord word) {
-        String today = LocalDate.now().toString();
-        if (!word.history.contains(today)) {
-            word.history.add(today);
-        }
+    public void commitReviewedWords(List<WordRecord> reviewed, boolean writeToFile) {
+        String userName = reviewed.isEmpty() ? null : reviewed.get(0).userName; // 從 WordRecord 拿使用者名
+        if (userName == null) return;
 
-        int reviewCount = word.history.size();
+        // 定義遺忘曲線間隔
         int[] intervals = {2, 4, 8, 15, 30, 30};
 
-        if (reviewCount <= intervals.length) {
-            LocalDate next = LocalDate.now().plusDays(intervals[reviewCount - 1]);
-            word.nextDate = next.toString();
-        } else {
-            word.status = "mastered"; // 畢業
-            word.nextDate = null;
-        }
-    }
+        List<Map<String, Object>> requestBody = reviewed.stream()
+                .map(wr -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("setName", wr.group);
+                    map.put("word", wr.word);
+                    map.put("definition", wr.definition);
 
-    public void commitReviewedWords(List<WordRecord> reviewed, boolean writeToFile) {
-        reviewed.stream()
-                .map(r -> r.word)
-                .distinct()
-                .forEach(word -> {
-                    allWords.stream()
-                            .filter(w -> w.word.equalsIgnoreCase(word))
-                            .findFirst()
-                            .ifPresent(this::markReviewedToday);
-                });
-        save();
+                    // 當天複習
+                    LocalDateTime lastReviewAt = LocalDate.now().atStartOfDay();
+                    map.put("lastReviewAt", lastReviewAt.toString());
+
+                    // 計算下一次複習日期
+                    int reviewCount = wr.review_count;
+                    reviewCount += 1; // 存入今天 +1
+
+                    if (reviewCount <= intervals.length) {
+                        LocalDateTime nextReviewAt = lastReviewAt.plusDays(intervals[reviewCount - 1]);
+                        map.put("nextReviewAt", nextReviewAt.toString());
+                    } else {
+                        map.put("nextReviewAt", null); // 已畢業
+                    }
+
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        try {
+            String url = String.format("http://localhost:8080/api/review/update?name=%s", userName);
+            restTemplate.postForEntity(url, requestBody, String.class);
+        } catch (Exception e) {
+            System.err.println("❌ 寫入 review_logs 失敗：" + e.getMessage());
+        }
+
+        if (writeToFile) {
+            save();
+        }
     }
 
     public List<String> getAllGroups(String userName) {
@@ -132,28 +145,6 @@ public class WordRepository_jumbo {
         String json = restTemplate.getForObject(url, String.class);
 
         List<WordRecord> allWordsInGroups = new ArrayList<>();
-//        try {
-//            JsonNode root = objectMapper.readTree(json);
-//            if (root.isArray()) {
-//                for (JsonNode node : root) {
-//                    // 1. 抽出最外層 id
-//                    long     id         = node.get("id").asLong();
-//                    // 2. 內層 word 物件
-//                    JsonNode wordNode   = node.get("word");
-//                    // 3. 取出扁平化的屬性
-//                    String   theWord    = wordNode.get("word").asText();
-//                    String   definition = wordNode.get("definition").asText();
-//
-//                    // 4. new 出一個乾淨的 WordRecord
-//                    WordRecord wr = new WordRecord();
-//                    wr.setId(id);
-//                    wr.setWord(theWord);
-//                    wr.setDefinition(definition);
-//                    // （其他欄位保持預設或自己再塞值）
-//
-//                    allWordsInGroups.add(wr);
-//                }
-//            }
             try {
                 JsonNode root = objectMapper.readTree(json);
                 if (!root.isArray()) return allWordsInGroups;
@@ -178,23 +169,10 @@ public class WordRepository_jumbo {
             } catch (Exception e) {
                 throw new RuntimeException("解析失敗", e);
             }
-//        } catch(Exception e){
-//            throw new RuntimeException("解析失敗", e);
-//        }
 
         return allWordsInGroups;
 
 
     }
-
-//    //給瀏覽字卡用
-//    public List<WordRecord> previewWordset(String group) {
-//        List<WordRecord> wordsInTheSet = allWords.stream()
-//                .filter(w -> w.group.equalsIgnoreCase(group))
-//                .collect(Collectors.toList());
-//
-//        return wordsInTheSet;
-//    }
-
 }
 

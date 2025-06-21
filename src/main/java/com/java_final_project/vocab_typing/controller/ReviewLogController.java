@@ -102,6 +102,9 @@ public class ReviewLogController {
         PersonalConfig config = configOpt.get();
         int reviewThreshold = config.getReviewThreshold();
 
+        // 遺忘曲線間隔（天）
+        int[] intervals = {2, 4, 8, 15, 30, 30};
+
         int successCount = 0;
 
         for (Map<String, Object> item : reviewDataList) {
@@ -113,7 +116,6 @@ public class ReviewLogController {
                 String lastReviewAtStr = (String) item.get("lastReviewAt");
 
                 // 轉換時間
-                LocalDateTime nextReviewAt = LocalDateTime.parse(nextReviewAtStr);
                 LocalDateTime lastReviewAt = LocalDateTime.parse(lastReviewAtStr);
 
                 // 找 word
@@ -125,17 +127,23 @@ public class ReviewLogController {
                 Optional<ReviewLog> logOpt = reviewLogRepository.findByUserIdAndSetNameAndWordId(userId, setName, word.getId());
 
                 if (logOpt.isPresent()) {
-                    // 更新 log
+                    // ✅ 更新 log（使用遺忘曲線）
                     ReviewLog log = logOpt.get();
-                    log.setReviewCount(log.getReviewCount() + 1);
+                    int newReviewCount = log.getReviewCount() + 1;
+                    log.setReviewCount(newReviewCount);
                     log.setLastReviewAt(lastReviewAt);
-                    log.setNextReviewAt(nextReviewAt);
-                    if (log.getReviewCount() >= log.getReviewThreshold()) {
+
+                    if (newReviewCount <= intervals.length) {
+                        LocalDateTime next = LocalDateTime.now().plusDays(intervals[newReviewCount - 1]);
+                        log.setNextReviewAt(next);
+                    } else {
+                        log.setNextReviewAt(null);
                         log.setStatus("FINISHED");
                     }
+
                     reviewLogRepository.save(log);
                 } else {
-                    // 新增 log
+                    // ✅ 新增 log（初次複習）
                     ReviewLog newLog = new ReviewLog();
                     newLog.setUser(user);
                     newLog.setWord(word);
@@ -143,7 +151,12 @@ public class ReviewLogController {
                     newLog.setReviewCount(1);
                     newLog.setReviewThreshold(reviewThreshold);
                     newLog.setLastReviewAt(lastReviewAt);
-                    newLog.setNextReviewAt(nextReviewAt);
+
+                    if (intervals.length > 0) {
+                        LocalDateTime next = LocalDateTime.now().plusDays(intervals[0]);
+                        newLog.setNextReviewAt(next);
+                    }
+
                     newLog.setStatus("IN_PROGRESS");
                     reviewLogRepository.save(newLog);
                 }

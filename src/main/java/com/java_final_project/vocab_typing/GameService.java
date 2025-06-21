@@ -124,6 +124,9 @@ public class GameService {
             WordRecord record = new WordRecord();
             record.word = (String) wordData.get("word");
             record.definition = (String) wordData.get("definition");
+            record.userName = userName;
+            record.group = (String) wordData.get("setName");
+            record.review_count = 0;
             wordQueue.add(record);
         }
 
