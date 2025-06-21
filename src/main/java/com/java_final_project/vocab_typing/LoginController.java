@@ -1,6 +1,6 @@
 package com.java_final_project.vocab_typing;
 
-Dimport jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
