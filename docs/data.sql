@@ -1,3 +1,7 @@
+INSERT INTO users (user_id, name) VALUES
+    ('user0001', 'Developer');
+
+
 INSERT INTO words (word_id, word, definition) VALUES
 (1, 'water', '水'),
 (2, 'fire', '火'),
@@ -160,6 +164,7 @@ INSERT INTO words (word_id, word, definition) VALUES
 (159, 'strategy', '策略'),
 (160, 'interpretation', '解釋');
 
+
 INSERT INTO word_sets (word_sets_id, set_name, user_id) VALUES
 (1, '基礎單字', 'user0001'),
 (2, '日常用語', 'user0001'),
@@ -170,8 +175,6 @@ INSERT INTO word_sets (word_sets_id, set_name, user_id) VALUES
 (7, '雅思 IELTS', 'user0001'),
 (8, '托福 TOEFL', 'user0001')
 
-INSERT INTO users (user_id, name) VALUES
-('user0001', 'Developer');
 
 INSERT INTO word_sets_words (word_sets_words_id, word_id, word_sets_id, added_at) VALUES
 (1, 1, 1, '2025-06-21 00:00:00'),
