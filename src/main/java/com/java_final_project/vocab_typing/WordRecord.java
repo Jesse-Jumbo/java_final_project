@@ -3,6 +3,7 @@ package com.java_final_project.vocab_typing;
 import java.util.List;
 
 public class WordRecord {
+    public int id;
     public String word;
     public String definition;
     public String group;

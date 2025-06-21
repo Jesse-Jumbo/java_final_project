@@ -24,8 +24,12 @@ public class GamePageController {
 
     // 首頁畫面（非遊戲邏輯）
     @GetMapping("/home")
-    public String home(Model model) {
-        List<String> groups = wordRepository.getAllGroups();
+    //取得username
+    public String home(
+            @SessionAttribute("userName") String userName,
+            Model model
+    ) {
+        List<String> groups = wordRepository.getAllGroups(userName);
         model.addAttribute("groups", groups);
         return "home";
     }
