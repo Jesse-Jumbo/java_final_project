@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 public class WordRepository_jumbo {
@@ -38,43 +39,31 @@ public class WordRepository_jumbo {
         }
     }
 
-    public List<WordRecord> getTodayWords(String group, int limit, int repeat, boolean includeReviewedToday) {
-        String today = LocalDate.now().toString();
-        LocalDate now = LocalDate.now();
-
-        List<WordRecord> todayWords = allWords.stream()
+    public List<WordRecord> getTodayWords(String group, int limit, int repeat) {
+        List<WordRecord> repeated = allWords.stream()
                 .filter(w -> w.group.equalsIgnoreCase(group))
-                .filter(w -> w.status.equals("in-progress"))
-                .filter(w -> {
-                    if (w.nextDate == null) return false;
-                    LocalDate nextDate = LocalDate.parse(w.nextDate);
-                    // ✅ 決定是否包含今天以前已複習過的單字
-                    if (includeReviewedToday) {
-                        return !nextDate.isAfter(now); // 今天或以前
-                    } else {
-                        boolean notReviewedToday = w.history == null || !w.history.contains(today);
-                        return !nextDate.isAfter(now) && notReviewedToday;
+                .filter(w ->{
+                    if (!w.status.equals("in-progress")) return false;
+                    try {
+                        return !LocalDate.parse(w.nextDate).isAfter(LocalDate.now()); // nextDate <= today
+                    } catch (Exception e) {
+                        return false;
                     }
                 })
-                .limit(limit)
+                .flatMap(w -> IntStream.range(0, repeat).mapToObj(i -> {
+                    WordRecord clone = new WordRecord();
+                    clone.word = w.word;
+                    clone.definition = w.definition;
+                    clone.group = w.group;
+                    clone.history = new ArrayList<>(w.history);
+                    clone.nextDate = w.nextDate;
+                    clone.status = w.status;
+                    return clone;
+                }))
                 .collect(Collectors.toList());
 
-        List<WordRecord> repeated = new ArrayList<>();
-        for (WordRecord word : todayWords) {
-            for (int i = 0; i < repeat; i++) {
-                WordRecord clone = new WordRecord();
-                clone.word = word.word;
-                clone.definition = word.definition;
-                clone.group = word.group;
-                clone.history = new ArrayList<>(word.history);
-                clone.nextDate = word.nextDate;
-                clone.status = word.status;
-                repeated.add(clone);
-            }
-        }
-
         Collections.shuffle(repeated);
-        return repeated;
+        return repeated.stream().limit((long)limit * repeat).collect(Collectors.toList());
     }
     //給瀏覽字卡用
     public List<WordRecord> previewWordset(String group) {
@@ -104,8 +93,6 @@ public class WordRepository_jumbo {
     }
 
     public void commitReviewedWords(List<WordRecord> reviewed, boolean writeToFile) {
-        String today = LocalDate.now().toString();
-
         reviewed.stream()
                 .map(r -> r.word)
                 .distinct()
@@ -113,24 +100,8 @@ public class WordRepository_jumbo {
                     allWords.stream()
                             .filter(w -> w.word.equalsIgnoreCase(word))
                             .findFirst()
-                            .ifPresent(w -> {
-                                if (writeToFile) {
-                                    // 正常紀錄：加入 history，推進 nextDate 或變成 mastered
-                                    markReviewedToday(w);
-                                } else {
-                                    // 清除紀錄：將今天移除，並設回今日複習
-                                    System.out.println("✅ [復原] " + w.word + " 已還原為今日複習項目");
-
-                                    if (!w.history.isEmpty() && today.equals(w.history.get(w.history.size() - 1))) {
-                                        w.history.remove(w.history.size() - 1);
-                                        w.nextDate = today;
-                                        w.status = "in-progress";
-                                        System.out.println("✅ [復原] " + w.word + " 已還原為今日複習項目");
-                                    }
-                                }
-                            });
+                            .ifPresent(this::markReviewedToday);
                 });
-
         save();
     }
 

@@ -23,9 +23,8 @@ public class GameApiController {
     }
 
     @PostMapping("/reset")
-    public void resetGame(@RequestParam(defaultValue = "false") boolean clearHistory) {
-        System.out.println("🔥 resetGame called with clearHistory = " + clearHistory);
-        gameService.resetGame(clearHistory);
+    public void resetGame() {
+        gameService.resetGame();
     }
 
     @PostMapping("/defeat")

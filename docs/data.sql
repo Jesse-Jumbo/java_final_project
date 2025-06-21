@@ -1,3 +1,6 @@
+INSERT INTO users (user_id, name) VALUES
+    ('user0001', 'Developer');
+
 INSERT INTO words (word_id, word, definition) VALUES
 (1, 'water', '水'),
 (2, 'fire', '火'),
@@ -168,10 +171,9 @@ INSERT INTO word_sets (word_sets_id, set_name, user_id) VALUES
 (5, '學測單字', 'user0001'),
 (6, '多益 TOEIC', 'user0001'),
 (7, '雅思 IELTS', 'user0001'),
-(8, '托福 TOEFL', 'user0001')
+(8, '托福 TOEFL', 'user0001');
 
-INSERT INTO users (user_id, name) VALUES
-('user0001', 'Developer');
+
 
 INSERT INTO word_sets_words (word_sets_words_id, word_id, word_sets_id, added_at) VALUES
 (1, 1, 1, '2025-06-21 00:00:00'),
@@ -335,9 +337,9 @@ INSERT INTO word_sets_words (word_sets_words_id, word_id, word_sets_id, added_at
 (159, 159, 8, '2025-06-21 00:00:00'),
 (160, 160, 8, '2025-06-21 00:00:00');
 
-INSERT INTO personal_config (user_id, daily_word_limit, review_threshold, start_speed_sec, end_speed_sec, updated_at) 
+INSERT INTO personal_config (user_id, daily_word_limit, review_threshold, start_speed_sec, end_speed_sec, updated_at)
 VALUES ('user0001', 10, 3, 5, 1, '2025-06-21 00:00:00');
 
 
-INSERT INTO game_sessions (user_id, game_mode, score, duration_sec, correct_count, miss_count, played_at) 
+INSERT INTO game_sessions (user_id, game_mode, score, duration_sec, correct_count, miss_count, played_at)
   VALUES ('user0001', 'speed', 100, 60, 20, 5, '2025-06-21 00:00:00');
