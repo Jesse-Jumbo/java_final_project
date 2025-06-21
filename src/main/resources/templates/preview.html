@@ -92,35 +92,16 @@
 <body>
 <div class="container">
     <h1 th:text="'『' + ${group} + '』'"></h1>
-    <div class="actions" th:switch="${group}">
-        <div th:case="'daily'">
             <h2>總共有 <span th:text="${words.size()}"></span> 個單字</h2>
-<!--            <p>總共有 <span th:text="${words.size()}"></span> 個單字。</p>-->
             <ul>
                 <li th:each="w : ${words}" th:text="${w.word} + ' — ' + ${w.definition}"></li>
             </ul>
             <!-- 用 POST 傳 group -->
             <form th:action="@{/start}" method="post">
                 <input type="hidden" name="group" th:value="${group}" />
-                <button type="submit" class="button">
-                    開始 Daily 測驗
-                </button>
+                <button type="submit" class="button" th:text="'開始 ' + ${group} + ' 測驗'"></button>
             </form>
-        </div>
-
-        <div th:case="*">
-            <h2>其他組別：<span th:text="${group}"></span></h2>
-            <p>尚未實作此組的預覽功能。</p>
-            <form th:action="@{/start}" method="post">
-                <input type="hidden" name="group" th:value="${group}" />
-                <button type="submit" class="button" th:text="'開始 ' + ${group} + ' 測驗'">
-<!--                    開始 Daily 測驗-->
-                </button>
-            </form>
-        </div>
-    </div>
     <a href="/home" class="back-link">← 回首頁</a>
 </div>
 </body>
 </html>
-<!--<button type="submit" name="group" th:value="${group}" th:text="${group}" class="btn"></button>-->
