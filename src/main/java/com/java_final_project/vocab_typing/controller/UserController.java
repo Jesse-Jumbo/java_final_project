@@ -39,7 +39,13 @@ public class UserController {
         return ResponseEntity.ok(userRepository.save(user));  // 🟢 儲存前必須有 ID
     }
 
-
+    // 🔹 根據 name 查詢 userId
+    @GetMapping("/name/{name}/id")
+    public ResponseEntity<String> getUserIdByName(@PathVariable String name) {
+        Optional<User> user = userRepository.findByName(name);
+        return user.map(u -> ResponseEntity.ok(u.getId()))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     // 查詢全部使用者
     @GetMapping
