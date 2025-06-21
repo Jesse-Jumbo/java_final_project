@@ -6,7 +6,7 @@ import java.util.*;
 
 @Service
 public class GameService {
-    private final WordRepository wordRepository;
+    private final WordRepository_jumbo wordRepository;
     private final Queue<WordRecord> wordQueue;
     private final List<WordRecord> reviewedToday;
     private int callCount = 0;
@@ -17,7 +17,7 @@ public class GameService {
     private String selectedGroup = "daily";
     private boolean completedOnce = false;
 
-    public GameService(WordRepository repo) {
+    public GameService(WordRepository_jumbo repo) {
         this.wordRepository = repo;
         this.wordQueue = new LinkedList<>(repo.getTodayWords(selectedGroup, maxPerDay, repeatPerWord, false));
         this.reviewedToday = new ArrayList<>();
