@@ -17,6 +17,19 @@
             height: 100vh;
         }
 
+        #gameCompletedMenu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
         #gameOverMenu {
             position: absolute;
             top: 0;
@@ -98,6 +111,14 @@
 <div id="gameArea"></div>
 <div id="ship"></div>
 <div id="lives">❤️ x 10</div>
+<div id="gameCompletedMenu" style="display: none;">
+    <div class="menu">
+        <h1>🎉 恭喜過關！</h1>
+        <p id="completionMessage"></p>
+        <button onclick="goHome()">回首頁</button>
+    </div>
+</div>
+
 <div id="gameOverMenu" style="display: none;">
     <div class="menu">
         <h1>💀 Game Over</h1>
@@ -115,6 +136,9 @@
     let lockedTarget = null;
     let isGameOver = false;
     let nextSpawnTimeout = null;
+    let startTime = Date.now();
+    let endTime = null;
+
 
 
     function renderMeteorText(meteor) {
@@ -202,6 +226,22 @@
         return [...str].map(ch => `<span>${ch}</span>`).join("");
     }
 
+    function showGameCompletedMenu() {
+        endTime = Date.now();
+        const seconds = Math.floor((endTime - startTime) / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        const timeMsg = `你共花了 ${minutes} 分 ${remainingSeconds} 秒完成複習！`;
+
+        document.getElementById("completionMessage").innerText = timeMsg;
+        document.getElementById("gameCompletedMenu").style.display = "flex";
+        if (nextSpawnTimeout) {
+            clearTimeout(nextSpawnTimeout);
+            nextSpawnTimeout = null;
+        }
+    }
+
+
     function showGameOverMenu() {
         document.getElementById("gameOverMenu").style.display = "flex";
         if (nextSpawnTimeout) {
@@ -247,8 +287,14 @@
     async function spawnMeteorFromAPI() {
         const res = await fetch("/api/next-word");
         const data = await res.json();
+        console.log(data); // 加上這一行看看實際回傳有沒有 completed
 
-        if (data.gameOver) {
+        if (!startTime) startTime = Date.now();
+
+        if (data.completed) {
+            showGameCompletedMenu();
+            return;
+        }else if (data.gameOver) {
             showGameOverMenu();
             return;
         }

@@ -86,7 +86,7 @@ public class WordRepository {
         }
     }
 
-    public void commitReviewedWords(List<WordRecord> reviewed) {
+    public void commitReviewedWords(List<WordRecord> reviewed, boolean writeToFile) {
         reviewed.stream()
                 .map(r -> r.word)
                 .distinct()
