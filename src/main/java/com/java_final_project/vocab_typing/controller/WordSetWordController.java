@@ -25,11 +25,12 @@ public class WordSetWordController {
         return ResponseEntity.ok(wordSetWordRepository.save(link));
     }
 
-    // 🔹 查詢某單字集中的所有單字
-    @GetMapping("/by-set/{wordSetId}")
-    public ResponseEntity<List<WordSetWord>> getWordsInSet(@PathVariable Long wordSetId) {
-        return ResponseEntity.ok(wordSetWordRepository.findByWordSetId(wordSetId));
+    // 🔹 根據 setName 查詢某單字集中的所有單字
+    @GetMapping("/by-set-name/{setName}")
+    public ResponseEntity<List<WordSetWord>> getWordsInSetBySetName(@PathVariable String setName) {
+        return ResponseEntity.ok(wordSetWordRepository.findByWordSetSetName(setName));
     }
+
 
     // 🔹 查詢某單字出現在那些單字集中
     @GetMapping("/by-word/{wordId}")
