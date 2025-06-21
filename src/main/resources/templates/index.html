@@ -17,7 +17,7 @@
             height: 100vh;
         }
 
-        #gameOverMenu, #gameCompletedMenu, #alreadyCompletedMenu {
+        #gameCompletedMenu, #noWordsMenu, #gameOverMenu {
             position: absolute;
             top: 0;
             left: 0;
@@ -98,6 +98,14 @@
 <div id="gameArea"></div>
 <div id="ship"></div>
 <div id="lives">❤️ x 10</div>
+<div id="gameCompletedMenu" style="display: none;">
+    <div class="menu">
+        <h1>🎉 恭喜過關！</h1>
+        <p id="completionMessage"></p>
+        <button onclick="goHome()">回首頁</button>
+    </div>
+</div>
+
 <div id="gameOverMenu" style="display: none;">
     <div class="menu">
         <h1>💀 Game Over</h1>
@@ -106,18 +114,10 @@
     </div>
 </div>
 
-<div id="gameCompletedMenu" style="display: none;">
+<div id="noWordsMenu" style="display: none;">
     <div class="menu">
-        <h1>🎉 恭喜複習完畢！</h1>
-        <button onclick="restartGame()">🔁 再來一輪</button>
-        <button onclick="goHome()">🏠 回到首頁</button>
-    </div>
-</div>
-
-<div id="alreadyCompletedMenu" style="display: none;">
-    <div class="menu">
-        <h1>🎓 今日已完成複習</h1>
-        <button onclick="restartGame()">🔁 再來一輪</button>
+        <h1>🎉 今日已無需複習的單字</h1>
+        <p>隔天再回來挑戰更多單字吧！</p>
         <button onclick="goHome()">🏠 回到首頁</button>
     </div>
 </div>
@@ -131,6 +131,9 @@
     let lockedTarget = null;
     let isGameOver = false;
     let nextSpawnTimeout = null;
+    let startTime = Date.now();
+    let endTime = null;
+
 
 
     function renderMeteorText(meteor) {
@@ -218,15 +221,15 @@
         return [...str].map(ch => `<span>${ch}</span>`).join("");
     }
 
-    function showGameOverMenu() {
-        document.getElementById("gameOverMenu").style.display = "flex";
-        if (nextSpawnTimeout) {
-            clearTimeout(nextSpawnTimeout);
-            nextSpawnTimeout = null;
-        }
-    }
-
     function showGameCompletedMenu() {
+        isGameOver = true;
+        endTime = Date.now();
+        const seconds = Math.floor((endTime - startTime) / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        const timeMsg = `你共花了 ${minutes} 分 ${remainingSeconds} 秒完成複習！`;
+
+        document.getElementById("completionMessage").innerText = timeMsg;
         document.getElementById("gameCompletedMenu").style.display = "flex";
         if (nextSpawnTimeout) {
             clearTimeout(nextSpawnTimeout);
@@ -234,16 +237,20 @@
         }
     }
 
-    function showAlreadyCompletedMenu() {
-        document.getElementById("alreadyCompletedMenu").style.display = "flex";
+
+    function showGameOverMenu(latestLives = 0) {
+        isGameOver = true;
+        updateLives(latestLives);
+        document.getElementById("gameOverMenu").style.display = "flex";
         if (nextSpawnTimeout) {
             clearTimeout(nextSpawnTimeout);
             nextSpawnTimeout = null;
         }
     }
 
-
     function restartGame() {
+        updateLives(10); // 預設 10 條命
+
         // 清除下一題排程
         if (nextSpawnTimeout) {
             clearTimeout(nextSpawnTimeout);
@@ -280,22 +287,24 @@
     }
 
     async function spawnMeteorFromAPI() {
+        if (isGameOver) return;  // ⚠️ 不再出新題
         const res = await fetch("/api/next-word");
         const data = await res.json();
+        console.log(data); // 加上這一行看看實際回傳有沒有 completed
 
-        console.log("👉 取得的資料", data);
-        if (data.gameOver) {
-            if (data.lives > 0 && activeMeteors.length === 0) {
-                // 從頭就沒有出現題目 → 今天已完成複習
-                showAlreadyCompletedMenu();
-            } else if (data.lives > 0) {
-                showGameCompletedMenu();
-            } else {
-                showGameOverMenu();
-            }
+        if (!startTime) startTime = Date.now();
+
+        if (data.completed) {
+            showGameCompletedMenu();
+            return;
+        }else if (data.gameOver) {
+            showGameOverMenu(lostData.lives);
+            return;
+        }else if (data.noWords) {
+            isGameOver = true;
+            document.getElementById("noWordsMenu").style.display = "flex";
             return;
         }
-
 
         updateLives(data.lives);
 
@@ -318,6 +327,11 @@
         activeMeteors.push(meteorObj);
 
         meteorObj.fallInterval = setInterval(async () => {
+            if (isGameOver) {
+                clearInterval(meteorObj.fallInterval);
+                meteor.remove();
+                return;
+            }
             meteorObj.y += 2;
             meteor.style.top = `${meteorObj.y}px`;
 
@@ -325,6 +339,7 @@
                 clearInterval(meteorObj.fallInterval);
 
                 if (meteorObj.remaining.length > 0) {
+                    if (isGameOver) return;
                     const lostRes = await fetch("/api/life/lost", { method: "POST" });
                     const lostData = await lostRes.json();
 

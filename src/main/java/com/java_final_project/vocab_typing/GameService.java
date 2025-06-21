@@ -17,73 +17,70 @@ public class GameService {
     private String selectedGroup = "daily";
     private boolean completedOnce = false;
 
-    public GameService(WordRepository_jumbo repo) {
-        this.wordRepository = repo;
-        this.wordQueue = new LinkedList<>(repo.getTodayWords(selectedGroup, maxPerDay, repeatPerWord, false));
-        this.reviewedToday = new ArrayList<>();
-    }
 
     public void setGroup(String group) {
         this.selectedGroup = group;
         resetGame();
     }
 
+    public GameService(WordRepository_jumbo repo) {
+        this.wordRepository = repo;
+        this.wordQueue = new LinkedList<>(repo.getTodayWords(selectedGroup, maxPerDay, repeatPerWord));
+        this.reviewedToday = new ArrayList<>();
+    }
+
     public WordGameState nextWord() {
         if (wordQueue.isEmpty()) {
-            if (!completedOnce && !reviewedToday.isEmpty()) {
+            if (reviewedToday.isEmpty()) {
+                // 沒有可複習的單字，直接回傳 noWords=true
+                return new WordGameState("", "", 0, lives, false, false, true);
+            }
+
+            if (!completedOnce) {
                 completedOnce = true;
                 wordRepository.commitReviewedWords(reviewedToday, true);
+                return new WordGameState("", "", 0, lives, false, true, false); // 勝利畫面
+            } else {
+                boolean gameOver = lives <= 0;
+                return new WordGameState("", "", 0, lives, gameOver, false, false);
             }
-            return new WordGameState("", "", 0, lives, true);
         }
 
         WordRecord word = wordQueue.poll();
-        reviewedToday.add(word);
-
-        callCount++;
-        int delay = 5000 - Math.min(callCount * 200, 2000); // 5s to 3s
-        return new WordGameState(word.word, word.definition, delay, lives, false);
-    }
-
-    public void resetGame() {
-        resetGame(false);
-    }
-
-    public void resetGame(boolean clearHistory) {
-        System.out.println("🔥 resetGame called with clearHistory = " + clearHistory);
-
-        if (!clearHistory) {
-            wordRepository.commitReviewedWords(reviewedToday, true);
-        } else {
-            wordRepository.commitReviewedWords(reviewedToday, false);
-            wordRepository.load(); // 重讀 JSON
+        if (word == null) {
+            // 防止 NPE，這應該理論上不會發生，但為保險加上
+            return new WordGameState("", "", 0, lives, false, false, true);
         }
 
-        callCount = 0;
-        lives = MAX_LIVES;
-        completedOnce = false;
-        wordQueue.clear();
-        reviewedToday.clear();
+        reviewedToday.add(word);
+        callCount++;
+        int delay = 5000 - Math.min(callCount * 200, 2000); // 5s to 3s
 
-        wordQueue.addAll(
-                wordRepository.getTodayWords(selectedGroup, maxPerDay, repeatPerWord, clearHistory)
-        );
-
-        System.out.println("✅ Reset 成功，載入單字：" + wordQueue.size());
+        return new WordGameState(word.word, word.definition, delay, lives, false, false, false);
     }
 
 
+    public void resetGame() {
+        callCount = 0;
+        lives = MAX_LIVES;
+        wordQueue.clear();
+        reviewedToday.clear();
+        wordQueue.addAll(wordRepository.getTodayWords(selectedGroup, maxPerDay, repeatPerWord));
+    }
 
     public WordGameState loseLife() {
         if (!reviewedToday.isEmpty()) {
             WordRecord last = reviewedToday.get(reviewedToday.size() - 1);
             if (last.defeated) {
-                return new WordGameState("", "", 0, lives, false); // 不扣命
+                return new WordGameState("", "", 0, lives, false, false, false); // ✅ 不扣命
             }
+        }
+        if (lives <= 0) {
+            return new WordGameState("", "", 0, lives, true, false, false); // 避免再扣命
         }
         lives--;
         boolean gameOver = lives <= 0;
-        return new WordGameState("", "", 0, lives, gameOver);
+        return new WordGameState("", "", 0, lives, gameOver, false, false);
     }
 
     public void markDefeated(String word) {
@@ -91,9 +88,9 @@ public class GameService {
                 .filter(w -> w.word.equalsIgnoreCase(word))
                 .forEach(w -> w.defeated = true);
     }
+
     //給瀏覽字卡用
     public List<WordRecord> getWordsByGroup(String group) {
         return wordRepository.previewWordset(group);
     }
-
 }
