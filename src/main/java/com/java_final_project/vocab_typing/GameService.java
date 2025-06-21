@@ -91,4 +91,9 @@ public class GameService {
                 .filter(w -> w.word.equalsIgnoreCase(word))
                 .forEach(w -> w.defeated = true);
     }
+    //給瀏覽字卡用
+    public List<WordRecord> getWordsByGroup(String group) {
+        return wordRepository.previewWordset(group);
+    }
+
 }

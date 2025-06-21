@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>使用者登入</title>
+  <style>
+    body {
+      background-color: black;
+      color: #f2f2f2;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background-color: #272727;
+      padding: 2rem 3rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .login-container h1 {
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .login-container label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+    .login-container input {
+      width: 94%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .login-container button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .login-container button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+<div class="login-container">
+  <h1>使用者登入</h1>
+  <form action="/login" method="post">
+
+    <label for="userName">Name：</label>
+    <input type="text" id="userName" name="userName" placeholder="請輸入使用者名稱" required>
+
+    <button type="submit">登入</button>
+  </form>
+  <a class="back-link" th:href="@{/home}" href="/home">跳過</a>
+</div>
+</body>
+</html>

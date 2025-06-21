@@ -77,7 +77,14 @@ public class WordRepository {
         Collections.shuffle(repeated);
         return repeated;
     }
+    //給瀏覽字卡用
+    public List<WordRecord> previewWordset(String group) {
+        List<WordRecord> wordsInTheSet = allWords.stream()
+                .filter(w -> w.group.equalsIgnoreCase(group))
+                .collect(Collectors.toList());
 
+        return wordsInTheSet;
+    }
 
     public void markReviewedToday(WordRecord word) {
         String today = LocalDate.now().toString();

@@ -4,45 +4,86 @@
     <meta charset="UTF-8">
     <title>選擇單字牌組</title>
     <style>
+        :root {
+            --bg-color: #000;
+            --card-bg: #1e1e1e;
+            --btn-bg: #fff;
+            --btn-hover-bg: #ccc;
+            --btn-color: #000;
+            --font-family: 'Courier New', monospace;
+        }
+        * {
+            box-sizing: border-box;
+        }
         body {
-            background-color: black;
-            color: white;
-            font-family: monospace;
+            background-color: var(--bg-color);
+            color: var(--btn-bg);
+            font-family: var(--font-family);
+            margin: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
+            padding: 1rem;
         }
-
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 2rem;
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 700px;
+            width: 100%;
         }
-
-        form button {
-            text-decoration: none;
-            background-color: white;
-            color: black;
-            padding: 1rem 2rem;
-            font-size: 1.5rem;
-            border-radius: 10px;
-            transition: background-color 0.3s;
-            margin: 0.5rem;
+        .container h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
         }
-
-        form button:hover {
-            background-color: #ccc;
+        .container h1 {
+            font-size: 2.5rem;
+            margin: 1rem 0 1.5rem;
+        }
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn {
+            background-color: var(--btn-bg);
+            color: var(--btn-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            min-width: 120px;
+        }
+        .btn:hover {
+            background-color: var(--btn-hover-bg);
+        }
+        .create-btn {
+            margin-top: 1rem;
+            background-color: #4caf50;
+            color: #fff;
+        }
+        .create-btn:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
-<h2>🚀 Vocabulary Typing Game</h2>
-<h1>請選擇你今天要複習的單字主題：</h1>
-<form method="post" action="/select">
-    <div th:each="group : ${groups}">
-        <button type="submit" name="group" th:value="${group}" th:text="${group}"></button>
-    </div>
-</form>
+<div class="container">
+    <h2>🚀 Vocabulary Typing Game</h2>
+    <h1>請選擇你今天要複習的單字主題</h1>
+    <form method="post" action="/select">
+        <div class="buttons" th:each="group : ${groups}">
+            <button type="submit" name="group" th:value="${group}" th:text="${group}" class="btn"></button>
+        </div>
+    </form>
+    <button type="button" class="btn create-btn" th:onclick="|location.href='@{/uploadpage}'|">新增牌組</button>
+</div>
 </body>
 </html>

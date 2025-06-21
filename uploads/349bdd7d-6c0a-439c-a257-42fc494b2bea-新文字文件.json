@@ -1,0 +1,14 @@
+{
+  "userId": "user0002",
+  "setName": "My Test Set",
+  "words": [
+    {
+      "word": "apple",
+      "definition": "蘋果"
+    },
+    {
+      "word": "run",
+      "definition": "跑步"
+    }
+  ]
+}

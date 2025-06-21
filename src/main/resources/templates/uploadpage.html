@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>檔案上傳</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100vh;
+      margin: 0;
+      padding-top: 30vh;
+      font-family: Arial, sans-serif;
+      background-color: black;
+    }
+    .container {
+      max-width: 620px;
+      width: 100%;
+      background-color: #272727;
+      color: #FFFFFF;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    input[type="file"] {
+      padding: 0.5rem;
+    }
+    button {
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: #fff;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .back-link {
+      display: block;
+      margin-top: 1rem;
+      text-align: center;
+      color: #fff;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>檔案上傳</h1>
+  <form form id="uploadForm" th:action="@{/upload}" action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" required />
+    <button type="submit">上傳</button>
+  </form>
+  <!-- 攔截json -->
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      try {
+        const resp = await fetch('/upload', { method: 'POST', body: formData });
+        const result = await resp.json();
+        if (resp.ok) {
+          alert('上傳成功：' + result.filename);
+        } else {
+          alert('上傳失敗，請注意輸入格式要求\n' + result.message);
+        }
+      } catch (err) {
+        alert('網路錯誤，請稍後再試');
+      }
+    });
+  </script>
+  <a class="back-link" th:href="@{/home}" href="/home">← 回首頁</a>
+</div>
+</body>
+</html>
