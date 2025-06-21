@@ -30,6 +30,19 @@
             z-index: 1000;
         }
 
+        #noWordsMenu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
         #gameOverMenu {
             position: absolute;
             top: 0;
@@ -126,6 +139,15 @@
         <button onclick="goHome()">🏠 回到首頁</button>
     </div>
 </div>
+
+<div id="noWordsMenu" style="display: none;">
+    <div class="menu">
+        <h1>🎉 今日已無需複習的單字</h1>
+        <p>隔天再回來挑戰更多單字吧！</p>
+        <button onclick="goHome()">🏠 回到首頁</button>
+    </div>
+</div>
+
 
 <script>
     const gameArea = document.getElementById("gameArea");
@@ -296,6 +318,9 @@
             return;
         }else if (data.gameOver) {
             showGameOverMenu();
+            return;
+        }else if (data.noWords) {
+            document.getElementById("noWordsMenu").style.display = "flex";
             return;
         }
 

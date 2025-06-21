@@ -8,13 +8,15 @@ public class WordGameState {
     public int lives;
     public boolean gameOver;
     public boolean completed;
+    public boolean noWords;
 
-    public WordGameState(String word, String definition, int durationMs, int lives, boolean gameOver, boolean completed) {
+    public WordGameState(String word, String definition, int durationMs, int lives, boolean gameOver, boolean completed, boolean noWords) {
         this.word = word;
         this.definition = definition;
         this.durationMs = durationMs;
         this.lives = lives;
         this.gameOver = gameOver;
         this.completed = completed;
+        this.noWords = noWords;
     }
 }

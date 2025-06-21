@@ -31,12 +31,15 @@ public class GameService {
 
     public WordGameState nextWord() {
         if (wordQueue.isEmpty()) {
+            if (reviewedToday.isEmpty()) {
+                return new WordGameState("", "", 0, lives, false, false, true);
+            }
             if (!completedOnce && !reviewedToday.isEmpty()) {
                 completedOnce = true;
                 wordRepository.commitReviewedWords(reviewedToday, true);
-                return new WordGameState("", "", 0, lives, false, true); // ✅ 遊戲完成（勝利）
+                return new WordGameState("", "", 0, lives, false, true, false); // ✅ 遊戲完成（勝利）
             } else {
-                return new WordGameState("", "", 0, lives, true, false); // 💀 Game Over
+                return new WordGameState("", "", 0, lives, true, false, false); // 💀 Game Over
             }
         }
 
@@ -46,7 +49,7 @@ public class GameService {
 
         callCount++;
         int delay = 5000 - Math.min(callCount * 200, 2000); // 5s to 3s
-        return new WordGameState(word.word, word.definition, delay, lives, false, false);
+        return new WordGameState(word.word, word.definition, delay, lives, false, false, false);
     }
 
     public void resetGame() {
@@ -61,12 +64,12 @@ public class GameService {
         if (!reviewedToday.isEmpty()) {
             WordRecord last = reviewedToday.get(reviewedToday.size() - 1);
             if (last.defeated) {
-                return new WordGameState("", "", 0, lives, false, false); // ✅ 不扣命
+                return new WordGameState("", "", 0, lives, false, false, false); // ✅ 不扣命
             }
         }
         lives--;
         boolean gameOver = lives <= 0;
-        return new WordGameState("", "", 0, lives, gameOver, false);
+        return new WordGameState("", "", 0, lives, gameOver, false, false);
     }
 
     public void markDefeated(String word) {
