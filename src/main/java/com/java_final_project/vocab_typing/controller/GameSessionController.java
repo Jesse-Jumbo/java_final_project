@@ -26,9 +26,9 @@ public class GameSessionController {
     @PostMapping("/record")
     public ResponseEntity<String> saveGameSession(@RequestBody GameSessionRequest request) {
 
-        Optional<User> userOpt = userRepository.findById(request.getUserId());
+        Optional<User> userOpt = userRepository.findByName(request.getUserName());
         if (userOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("❌ 使用者不存在：" + request.getUserId());
+            return ResponseEntity.badRequest().body("❌ 使用者不存在：" + request.getUserName());
         }
 
         GameSession session = new GameSession();
@@ -36,8 +36,8 @@ public class GameSessionController {
         session.setGameMode(request.getGameMode());
         session.setScore(request.getScore());
         session.setDurationSec(request.getDurationSec());
-        session.setCorrectCount(request.getCorrectCount());
-        session.setMissCount(request.getMissCount());
+        session.setCorrectCount(null); // 不記錄
+        session.setMissCount(null);    // 不記錄
         session.setPlayedAt(new Timestamp(System.currentTimeMillis()));
 
         gameSessionRepository.save(session);
@@ -47,7 +47,7 @@ public class GameSessionController {
 
     //接收用的 Request DTO
     public static class GameSessionRequest {
-        private String userId;
+        private String userName;
         private GameSession.GameMode gameMode;
         private Integer score;
         private Integer durationSec;
@@ -55,12 +55,14 @@ public class GameSessionController {
         private Integer missCount;
 
         // Getters and Setters
-        public String getUserId() {
-            return userId;
+
+
+        public String getUserName() {
+            return userName;
         }
 
-        public void setUserId(String userId) {
-            this.userId = userId;
+        public void setUserName(String userName) {
+            this.userName = userName;
         }
 
         public GameSession.GameMode getGameMode() {
