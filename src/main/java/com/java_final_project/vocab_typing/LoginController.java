@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Collections;
 import java.util.Map;
@@ -48,6 +49,7 @@ public class LoginController {
         // 2. 呼叫 helper function 做實際認證/查詢
         if (hasUser(userName, session)) {
             // 驗證成功、Session 已設值
+            session.setAttribute("userName", userName);
             return "redirect:/home";
         } else {
             // 驗證失敗：分兩種情況設定不同訊息
