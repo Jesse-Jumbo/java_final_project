@@ -40,10 +40,16 @@ public class WordRepository {
     }
 
     public List<WordRecord> getTodayWords(String group, int limit, int repeat) {
-        String today = LocalDate.now().toString();
         List<WordRecord> repeated = allWords.stream()
                 .filter(w -> w.group.equalsIgnoreCase(group))
-                .filter(w -> w.status.equals("in-progress") && today.equals(w.nextDate))
+                .filter(w ->{
+                    if (!w.status.equals("in-progress")) return false;
+                    try {
+                        return !LocalDate.parse(w.nextDate).isAfter(LocalDate.now()); // nextDate <= today
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
                 .flatMap(w -> IntStream.range(0, repeat).mapToObj(i -> {
                     WordRecord clone = new WordRecord();
                     clone.word = w.word;
@@ -57,7 +63,7 @@ public class WordRepository {
                 .collect(Collectors.toList());
 
         Collections.shuffle(repeated);
-        return repeated.stream().limit(limit * repeat).collect(Collectors.toList());
+        return repeated.stream().limit((long)limit * repeat).collect(Collectors.toList());
     }
 
 
