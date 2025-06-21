@@ -30,28 +30,30 @@ public class WordSetController {
         return ResponseEntity.ok(wordSetRepository.findAll());
     }
 
-    // 🔹 根據 ID 查詢單字集
-    @GetMapping("/{id}")
-    public ResponseEntity<WordSet> getWordSetById(@PathVariable Long id) {
-        Optional<WordSet> wordSet = wordSetRepository.findById(id);
+    // 🔹 根據 setName 查詢單字集
+    @GetMapping("/set/{setName}")
+    public ResponseEntity<WordSet> getWordSetBySetName(@PathVariable String setName) {
+        Optional<WordSet> wordSet = wordSetRepository.findBySetName(setName);
         return wordSet.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // 🔹 查詢特定使用者的所有單字集
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<WordSet>> getWordSetsByUserId(@PathVariable String userId) {
-        return ResponseEntity.ok(wordSetRepository.findByUserId(userId));
+    @GetMapping("/user/{name}")
+    public ResponseEntity<List<WordSet>> getWordSetsByUserName(@PathVariable String name) {
+        return ResponseEntity.ok(wordSetRepository.findByUserName(name));
     }
 
-    // 🔹 刪除單字集
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteWordSet(@PathVariable Long id) {
-        if (wordSetRepository.existsById(id)) {
-            wordSetRepository.deleteById(id);
-            return ResponseEntity.ok("已刪除單字集：" + id);
+    // 🔹 根據 setName 刪除單字集
+    @DeleteMapping("/set/{setName}")
+    public ResponseEntity<String> deleteWordSetBySetName(@PathVariable String setName) {
+        Optional<WordSet> wordSetOpt = wordSetRepository.findBySetName(setName);
+        if (wordSetOpt.isPresent()) {
+            wordSetRepository.delete(wordSetOpt.get());
+            return ResponseEntity.ok("已刪除單字集：" + setName);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
 }
