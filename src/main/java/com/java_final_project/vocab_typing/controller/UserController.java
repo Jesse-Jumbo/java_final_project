@@ -20,9 +20,26 @@ public class UserController {
 
     // 建立使用者
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(userRepository.save(user));
+    public ResponseEntity<User> createUser(@RequestBody User userInput) {
+        String prefix = "user";
+        int maxNum = userRepository.findAll().stream()
+                .map(User::getId)
+                .filter(id -> id.startsWith(prefix))
+                .map(id -> id.replace(prefix, ""))
+                .mapToInt(Integer::parseInt)
+                .max()
+                .orElse(0);
+
+        String newUserId = prefix + String.format("%04d", maxNum + 1); // e.g., user0002
+
+        User user = new User();
+        user.setId(newUserId);  // 🟢 必要
+        user.setName(userInput.getName());
+
+        return ResponseEntity.ok(userRepository.save(user));  // 🟢 儲存前必須有 ID
     }
+
+
 
     // 查詢全部使用者
     @GetMapping
