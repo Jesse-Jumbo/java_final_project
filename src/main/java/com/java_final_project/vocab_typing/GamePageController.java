@@ -1,5 +1,6 @@
 package com.java_final_project.vocab_typing;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,10 +35,11 @@ public class GamePageController {
         return "home";
     }
 
-
     @PostMapping("/start")
-    public String selectGroup(@RequestParam("group") String group, Model model) {
-        gameService.setGroup(group);
+    public String selectGroup(
+            @RequestParam("group") String group,
+            @SessionAttribute("userName") String userName) {
+        gameService.setGroupFromReviewApi(userName, group);  // 把資料初始化進 queue
         return "redirect:/play";
     }
 
