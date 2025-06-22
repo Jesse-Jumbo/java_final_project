@@ -134,7 +134,29 @@
     let startTime = Date.now();
     let endTime = null;
 
+    let config = {
+        startSpeedSec: 4,
+        endSpeedSec: 1,
+        reviewThreshold: 3,
+        dailyWordLimit: 10,
+    };
 
+    const userId = "user0001"; // 可改為登入資訊
+
+    async function loadUserConfig() {
+        try {
+            const res = await fetch(`/api/config/${userId}`);
+            if (!res.ok) throw new Error("Config not found");
+
+            const data = await res.json();
+            config.startSpeedSec = data.startSpeedSec;
+            config.endSpeedSec = data.endSpeedSec;
+            config.reviewThreshold = data.reviewThreshold;
+            config.dailyWordLimit = data.dailyWordLimit;
+        } catch (err) {
+            console.warn("❗無法讀取個人設定，將使用預設值", err);
+        }
+    }
 
     function renderMeteorText(meteor) {
         return [...meteor.remaining].map(ch => `<span>${ch}</span>`).join("");
@@ -147,25 +169,16 @@
     function shootBullet(targetMeteor) {
         const bullet = document.createElement("div");
         bullet.className = "bullet";
-
         const shipBox = ship.getBoundingClientRect();
         const meteorBox = targetMeteor.element.getBoundingClientRect();
-
-        const startX = shipBox.left + shipBox.width / 2;
-        const startY = shipBox.top;
-        const endX = meteorBox.left + meteorBox.width / 2;
-        const endY = meteorBox.top + 10;
-
-        bullet.style.left = `${startX}px`;
-        bullet.style.top = `${startY}px`;
+        bullet.style.left = `${shipBox.left + shipBox.width / 2}px`;
+        bullet.style.top = `${shipBox.top}px`;
         bullet.style.transition = "top 0.5s linear, left 0.5s linear";
         gameArea.appendChild(bullet);
-
         setTimeout(() => {
-            bullet.style.left = `${endX}px`;
-            bullet.style.top = `${endY}px`;
+            bullet.style.left = `${meteorBox.left + meteorBox.width / 2}px`;
+            bullet.style.top = `${meteorBox.top + 10}px`;
         }, 10);
-
         setTimeout(() => bullet.remove(), 600);
     }
 
@@ -173,7 +186,7 @@
         try {
             await fetch("/api/defeat", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(word)
             });
         } catch (err) {
@@ -183,7 +196,6 @@
 
     document.addEventListener("keydown", async (event) => {
         const key = event.key.toLowerCase();
-
         if (!lockedTarget) {
             for (let meteor of activeMeteors) {
                 if (meteor.remaining.toLowerCase().startsWith(key)) {
@@ -192,16 +204,13 @@
                 }
             }
         }
-
         if (lockedTarget) {
             const expected = lockedTarget.remaining.charAt(0).toLowerCase();
             const spans = lockedTarget.element.querySelectorAll("span");
             if (spans.length > 0) spans[0].classList.remove("wrong");
-
             if (key === expected) {
                 shootBullet(lockedTarget);
                 lockedTarget.remaining = lockedTarget.remaining.substring(1);
-
                 if (lockedTarget.remaining.length > 0) {
                     lockedTarget.element.innerHTML = renderMeteorText(lockedTarget);
                 } else {
@@ -216,7 +225,6 @@
         }
     });
 
-
     function renderMeteorTextFromString(str) {
         return [...str].map(ch => `<span>${ch}</span>`).join("");
     }
@@ -228,58 +236,38 @@
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
         const timeMsg = `你共花了 ${minutes} 分 ${remainingSeconds} 秒完成複習！`;
-
         document.getElementById("completionMessage").innerText = timeMsg;
         document.getElementById("gameCompletedMenu").style.display = "flex";
-        if (nextSpawnTimeout) {
-            clearTimeout(nextSpawnTimeout);
-            nextSpawnTimeout = null;
-        }
+        if (nextSpawnTimeout) clearTimeout(nextSpawnTimeout);
     }
-
 
     function showGameOverMenu(latestLives = 0) {
         isGameOver = true;
         updateLives(latestLives);
         document.getElementById("gameOverMenu").style.display = "flex";
-        if (nextSpawnTimeout) {
-            clearTimeout(nextSpawnTimeout);
-            nextSpawnTimeout = null;
-        }
+        if (nextSpawnTimeout) clearTimeout(nextSpawnTimeout);
     }
 
     function restartGame() {
-        updateLives(10); // 預設 10 條命
-
-        // 清除下一題排程
-        if (nextSpawnTimeout) {
-            clearTimeout(nextSpawnTimeout);
-            nextSpawnTimeout = null;
-        }
-
-        // 停止所有隕石掉落動畫 & 移除畫面上的隕石
+        updateLives(10);
+        if (nextSpawnTimeout) clearTimeout(nextSpawnTimeout);
         activeMeteors.forEach(meteor => {
             if (meteor.fallInterval) clearInterval(meteor.fallInterval);
             meteor.element.remove();
         });
-
-        // 清空狀態
         activeMeteors = [];
         lockedTarget = null;
         isGameOver = false;
-
-        // 隱藏 Game Over 菜單
         document.getElementById("gameOverMenu").style.display = "none";
         document.getElementById("gameCompletedMenu").style.display = "none";
         document.getElementById("alreadyCompletedMenu").style.display = "none";
-
         fetch("/api/reset", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
             body: "clearHistory=true"
-        })
+        });
     }
 
     function goHome() {
@@ -287,20 +275,20 @@
     }
 
     async function spawnMeteorFromAPI() {
-        if (isGameOver) return;  // ⚠️ 不再出新題
+        if (isGameOver) return;
         const res = await fetch("/api/next-word");
         const data = await res.json();
-        console.log(data); // 加上這一行看看實際回傳有沒有 completed
+        console.log(data);
 
         if (!startTime) startTime = Date.now();
 
         if (data.completed) {
             showGameCompletedMenu();
             return;
-        }else if (data.gameOver) {
-            showGameOverMenu(lostData.lives);
+        } else if (data.gameOver) {
+            showGameOverMenu(data.lives);
             return;
-        }else if (data.noWords) {
+        } else if (data.noWords) {
             isGameOver = true;
             document.getElementById("noWordsMenu").style.display = "flex";
             return;
@@ -326,6 +314,10 @@
 
         activeMeteors.push(meteorObj);
 
+        const progress = data.progressRatio ?? 0;
+        const speedSec = config.startSpeedSec - (config.startSpeedSec - config.endSpeedSec) * progress;
+        const durationMs = speedSec * 1000;
+
         meteorObj.fallInterval = setInterval(async () => {
             if (isGameOver) {
                 clearInterval(meteorObj.fallInterval);
@@ -337,34 +329,32 @@
 
             if (meteorObj.y >= window.innerHeight - 50) {
                 clearInterval(meteorObj.fallInterval);
-
                 if (meteorObj.remaining.length > 0) {
                     if (isGameOver) return;
-                    const lostRes = await fetch("/api/life/lost", { method: "POST" });
+                    const lostRes = await fetch("/api/life/lost", {method: "POST"});
                     const lostData = await lostRes.json();
-
                     if (lostData.gameOver) {
                         showGameOverMenu();
                         return;
                     }
                     updateLives(lostData.lives);
-                    spawnMeteorFromAPI(); // 繼續出下一題
+                    spawnMeteorFromAPI();
                 }
-
                 meteor.remove();
                 activeMeteors = activeMeteors.filter(m => m !== meteorObj);
                 if (lockedTarget === meteorObj) lockedTarget = null;
             }
-        }, Math.max(data.durationMs / 200, 30));
+        }, Math.max(durationMs / 200, 30));
 
-        // ❗重點：只有在 Java 回傳 gameOver = false 時才進入這裡
         if (!data.gameOver) {
-            nextSpawnTimeout = setTimeout(spawnMeteorFromAPI, data.durationMs);
+            nextSpawnTimeout = setTimeout(spawnMeteorFromAPI, durationMs);
         }
     }
 
-    // 遊戲開始
-    spawnMeteorFromAPI();
+    // ⚠️ 等載入設定後再啟動遊戲
+    loadUserConfig().then(() => {
+        spawnMeteorFromAPI();
+    });
 </script>
 </body>
 </html>
